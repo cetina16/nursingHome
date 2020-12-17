@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %}Disease{% endblock %}
+{% block content %}
+    <h1 class="title">Disease</h1>
+
+    <table class="table">
+      <tr>
+        <th>Name:</th>
+        <td>{{ disease.name }}</td>
+      </tr>
+      <tr>
+        <th>Risk level:</th>
+        <td>{{ disease.risklevel }}</td>
+      </tr>
+      {% if disease.period %}
+      <tr>
+        <th>Period:</th>
+        <td>{{ disease.period }}</td>
+      </tr>
+      {% endif %}
+    </table>
+
+    <div class="field is-grouped">
+      <div class="control">
+        <a class="button is-primary is-outlined is-small"
+           href="{{ request.path }}/edit">Edit</a>
+      </div>
+    </div>
+{% endblock %}

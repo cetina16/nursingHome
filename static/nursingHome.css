@@ -1,0 +1,11 @@
+h1.title {
+    color: #098340;
+}
+
+footer {
+    text-align: center;
+}
+
+.is-horizontal-center {
+    justify-content: center;
+  }

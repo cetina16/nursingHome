@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block title %}Add disease{% endblock %}
+{% block content %}
+    <h1 class="title">Add disease</h1>
+
+    <form action="" method="post" name="disease_edit">
+      <div class="field">
+        <label for="name" class="label">   Name   </label>
+        <div class="control">
+          <input type="text" name="name" class="input" required="required" value="{{ values['name'] }}"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="risklevel" class="label">   Risk Level  </label>
+        <div class="control">
+          <input type="number" name="risklevel" class="input"
+                 min=1 max=5 required="required" value="{{ values['risklevel'] }}"/>
+        </div>
+      </div>
+      <div class="field">
+        <label for="period" class="label">  Period  </label>
+        <div class="control">
+          <input type="number" name="period" class="input" value="{{ values['period'] }}"/>
+        </div>
+      </div>
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-light is-small">  Save  </button>
+        </div>
+      </div>
+    </form>
+{% endblock %}
