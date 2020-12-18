@@ -6,6 +6,9 @@
         <div class="container has-text-centered">
           <h1 class="title">DISEASE and TREATMENT MONITORING SYSTEM</h1>
           <p class="subtitle">{{ date }} - Welcome to Nursing Home!</p>
+          {% if current_user.is_authenticated %}
+            Have a nice day Dr. {{ current_user.name }}!
+          {% endif %}
         </div>
       </div>
     </section>
