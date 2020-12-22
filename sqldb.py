@@ -10,10 +10,10 @@ db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursin
 cursor = db.cursor()
 
 sql_line =  """CREATE TABLE DOCTOR(
-                nh_id INT PRIMARY KEY AUTO_INCREMENT,
                 doctor_name VARCHAR(40) NOT NULL,
-                email VARCHAR(40) NOT NULL UNIQUE,
-                doc_password VARCHAR(64) NOT NULL
+                email VARCHAR(40) PRIMARY KEY,
+                doc_password VARCHAR(64) NOT NULL,
+                nh_id INT NOT NULL UNIQUE
                 )
             """
 cursor.execute(sql_line)
