@@ -8,6 +8,7 @@ from passlib.hash import pbkdf2_sha256 as hasher
 from flask_login import login_user,logout_user
 
 
+
 def home():
     today = date.today()
     date_time = today.strftime("%m/%d/%Y")
@@ -87,3 +88,15 @@ def logout_page():
     logout_user()
     #flash("You have logged out.")
     return redirect(url_for("home"))
+
+def resident_page():
+    db = current_app.config["db"]
+    if request.method == "GET":
+        diseases = db.get_diseases()
+        return render_template("resident.html", diseases=sorted(diseases))
+    else:
+        form_disease_keys = request.form.getlist("disease_keys")
+        for form_disease_key in form_disease_keys:
+            db.delete_disease(int(form_disease_key))
+        #return render_template("home.html")
+        return redirect(url_for("resident_page"))
