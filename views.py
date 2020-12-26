@@ -2,10 +2,12 @@ from flask import render_template,request,redirect,url_for
 from datetime import date
 from flask import current_app
 from disease import Disease
+from resident import Resident
 from forms import LoginForm
 from user import get_user
 from passlib.hash import pbkdf2_sha256 as hasher
 from flask_login import login_user,logout_user
+from flask_mysqldb import MySQLdb
 
 
 
@@ -89,14 +91,31 @@ def logout_page():
     #flash("You have logged out.")
     return redirect(url_for("home"))
 
-def resident_page():
-    db = current_app.config["db"]
+def resident_add_page():
     if request.method == "GET":
-        diseases = db.get_diseases()
-        return render_template("resident.html", diseases=sorted(diseases))
+        values = {"name": "", "age": "", "gender": ""}
+        return render_template(
+            "resident_edit.html", values = values,
+        )
     else:
-        form_disease_keys = request.form.getlist("disease_keys")
-        for form_disease_key in form_disease_keys:
-            db.delete_disease(int(form_disease_key))
-        #return render_template("home.html")
-        return redirect(url_for("resident_page"))
+        form_name = request.form["name"]
+        form_age = request.form["age"]
+        form_gender = request.form["gender"]
+        #resident = Resident(form_name, form_age, form_gender)
+
+        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+        cursor = db.cursor()
+        #cursor.execute("INSERT INTO Resident(name, age, gender) VALUES (%s,%s,%s))
+        cursor.execute("INSERT INTO Resident(name, age, gender) VALUES(%s,%s,%s)", (form_name,form_age,form_gender))
+       #line = "INSERT INTO Resident(name, age, gender) VALUES (%s,%s,%s)"
+        #cursor.execute(line,(form_name,form_age,form_gender))
+        db.commit()
+        cursor.close()
+       # return redirect(url_for("resident_add_page"))
+        return "success"
+
+def residents_page():
+    if request.method == "GET":
+        return render_template("residents.html")
+    else:
+        return redirect(url_for("residents_page"))
