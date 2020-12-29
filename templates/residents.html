@@ -2,4 +2,15 @@
 {% block title %}Resident List{% endblock %}
 {% block content %}
     <h1 class="title">Residents</h1>
+
+    <table class="table is-striped is-fullwidth">
+    {% for row in values %}
+    <tr>
+        {% for d in row %}
+        <td>{{ d }}</td>
+         {% endfor %}
+    </tr>
+    {% endfor %}
+      </table>
+
 {% endblock %}

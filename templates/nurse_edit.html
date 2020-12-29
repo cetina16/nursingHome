@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %}Add Nurse{% endblock %}
+{% block content %}
+    <h1 class="title">Add nurse</h1>
+
+    <form action="" method="post" name="disease_edit">
+      <div class="field">
+        <label for="name" class="label">   Name   </label>
+        <div class="control">
+          <input type="text" name="name" class="input" required="required" value="{{ values['name'] }}"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="capacity" class="label">   Capacity  </label>
+        <div class="control">
+          <input type="number" name="capacity" class="input"
+                  required="required" value="{{ values['capacity'] }}"/>
+        </div>
+      </div>
+     
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-light is-small">  Save  </button>
+        </div>
+      </div>
+    </form>
+{% endblock %}

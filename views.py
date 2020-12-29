@@ -37,7 +37,7 @@ def diseases_page():
     db = current_app.config["db"]
     if request.method == "GET":
         diseases = db.get_diseases()
-        return render_template("diseases.html", diseases=sorted(diseases))
+        return render_template("diseases.html", diseases=sorted(diseases)) 
     else:
         form_disease_keys = request.form.getlist("disease_keys")
         for form_disease_key in form_disease_keys:
@@ -101,13 +101,19 @@ def resident_add_page():
         form_name = request.form["name"]
         form_age = request.form["age"]
         form_gender = request.form["gender"]
-        #resident = Resident(form_name, form_age, form_gender)
+        name = str(form_name)
+        age = int (form_age)
+        gender = str(form_gender)
 
         db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
         cursor = db.cursor()
-        #cursor.execute("INSERT INTO Resident(name, age, gender) VALUES (%s,%s,%s))
-        cursor.execute("INSERT INTO Resident(name, age, gender) VALUES(%s,%s,%s)", (form_name,form_age,form_gender))
-       #line = "INSERT INTO Resident(name, age, gender) VALUES (%s,%s,%s)"
+        #insert_stmt = ("INSERT INTO Resident(name, age, gender)" "VALUES (name,age,gender)")
+        
+        #data = (name,age,gender)
+        #cursor.execute(insert_stmt, data)
+        # cursor.execute("INSERT INTO Resident(name, age, gender) VALUES (%s,%s,%s))
+        cursor.execute("INSERT INTO Resident(name, age, gender,) VALUES(%s,%d,%s)", (form_name,form_age,form_gender))
+        # line = "INSERT INTO Resident(name, age, gender) VALUES (%s,%s,%s)"
         #cursor.execute(line,(form_name,form_age,form_gender))
         db.commit()
         cursor.close()
@@ -116,6 +122,57 @@ def resident_add_page():
 
 def residents_page():
     if request.method == "GET":
-        return render_template("residents.html")
+        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+        cursor = db.cursor()
+        query = "SELECT name,age,gender FROM resident"
+        cursor.execute(query)
+        values = cursor.fetchall()
+        return render_template("residents.html",values=values)
     else:
         return redirect(url_for("residents_page"))
+
+def nurses_page():
+    if request.method == "GET":
+        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+        cursor = db.cursor()
+        query = "SELECT name,capacity FROM nurse"
+        cursor.execute(query)
+        values = cursor.fetchall()
+        return render_template("nurses.html",values=values)
+    else:
+        return redirect(url_for("nurses_page"))
+
+def nurse_add_page():
+    if request.method == "GET":
+        values = {"name": "", "capacity": ""}
+        return render_template(
+            "nurse_edit.html", values = values,
+        )
+    else:
+        form_name = request.form["name"]
+        form_capacity = request.form["capacity"]
+        name = str(form_name)
+        capacity = str(form_capacity)
+        homeid = "1"
+        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+        cursor = db.cursor()
+
+        insert_stmt = "INSERT INTO Nurse(name,capacity) VALUES (%s,%s)"
+        data = (name,capacity)
+        cursor.execute(insert_stmt, data)
+
+        db.commit()
+        cursor.close()
+        return redirect(url_for("nurses_page"))
+
+def nurse_page():  # this will take parameter
+    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    cursor = db.cursor()
+    # select the nurse 
+    #db.commit()
+    cursor.close()
+    #return render_template("nurse.html", nurse=nurse)
+    return "success"
+
+def filter_page():
+    return render_template("filter.html")

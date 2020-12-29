@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block title %}Nurse List{% endblock %}
+{% block content %}
+    <h1 class="title">Nurses</h1>
+    <form action="" method="post" name="nurse_list">
+    <table class="table is-striped is-fullwidth">
+    <tr>
+      <td> </td>
+      <td><h2 class = "subtitle"> Name</h2></td>
+      <td><h2 class = "subtitle">Capacity</h2></td>
+    </tr>
+    {% for row in values %}
+    <tr> 
+      <td>
+      <label class="checkbox">
+        <input type="checkbox"/>
+      </label>
+    </td>
+      {% for d in row %}
+      <td>
+        <a href="{{ url_for('nurse_page') }}">
+        {{ d }}
+        </a>
+      </td> 
+      {% endfor %} 
+
+    </tr>
+    {% endfor %}
+      </table>
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-danger is-small">Delete</button>
+        </div>
+      </div>
+    </form>
+
+{% endblock %}
