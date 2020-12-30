@@ -8,4 +8,7 @@ footer {
 
 .is-horizontal-center {
     justify-content: center;
-  }
+}
+body{
+    background-image: url("back.png");
+}

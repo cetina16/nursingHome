@@ -3,7 +3,7 @@
 {% block content %}
     <h1 class="title">Add nurse</h1>
 
-    <form action="" method="post" name="disease_edit">
+    <form action="" method="post" name="nurse_edit">
       <div class="field">
         <label for="name" class="label">   Name   </label>
         <div class="control">
@@ -18,6 +18,29 @@
                   required="required" value="{{ values['capacity'] }}"/>
         </div>
       </div>
+      <div class="field">
+        <label for="address" class="label">   Address   </label>
+        <div class="control">
+          <input type="text" name="address" class="input" required="required" value="{{ values['address'] }}"/>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Type</label>
+        <div class="control">
+          <div class="select is-info">
+            <select>
+              <option>Full Time</option>
+              <option>Part Time</option>
+            </select>
+          </div>
+        </div>
+    </div>
+    <div class="field">
+        <label for="tel" class="label">Tel</label>
+        <div class="control">
+        <input class="input" name="tel" type="tel" required="required" value="{{ values['tel'] }}" placeholder="e.g. (539) 937 55 09"/>
+        </div>
+    </div>
      
 
       <div class="field is-grouped">

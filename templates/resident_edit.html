@@ -14,16 +14,41 @@
       <div class="field">
         <label for="age" class="label">   Age  </label>
         <div class="control">
-          <input type="text" name="age" class="input"
+          <input type="number" name="age" class="input" min=65 max=110
                   required="required" value="{{ values['age'] }}"/>
         </div>
       </div>
       <div class="field">
         <label for="gender" class="label">  Gender  </label>
-        <div class="control">
-          <input type="text" required="required" name="gender" class="input" value="{{ values['gender'] }}"/>
+        <div class="select">
+          <select>
+            <option>Female</option>
+            <option>Male</option>
+          </select>
         </div>
       </div>
+
+      <div class="field">
+        <label for="tel" class="label">Tel</label>
+        <div class="control">
+        <input class="input is-info" name="tel" type="tel" required="required" value="{{ values['tel'] }}" placeholder="e.g. (256) 226 55 09"/>
+        </div>
+      </div>
+
+     <div class="field">
+       <div class="control">
+        <label for="bedridden" class="label">Is the resident bedridden?</label>
+          <label class="radio">
+            <input type="radio" name="question">
+                Yes
+          </label>
+          <label class="radio">
+            <input type="radio" name="question" checked>
+              No
+          </label>
+        </div>
+      </div>
+
 
       <div class="field is-grouped">
         <div class="control">

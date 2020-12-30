@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block title %}Sign-up{% endblock %}
+{% block content %}
+
+<script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
+<section class="hero">
+      <div class="container has-text-centered">
+        <div class="column is-4 is-offset-4">
+        <h3 class="title has-text-grey">Sign-up</h3>
+          <div class="box">
+                <form action="" method="post" name="signup">
+                <div class="field">
+                    <label for="name" class="label">Name</label>
+                    <div class="control">
+                    <input class="input is-info" name="name" required="required" type="text" placeholder="Full Name" value="{{ values['name'] }}"/>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="homename" class="label">Nursing Home Name</label>
+                    <div class="control">
+                    <input class="input is-info" name="homename" type="text" required="required" value="{{ values['homename'] }}" placeholder=""/>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="type" class="label">Type</label>
+                    <div class="control">
+                    <input class="input is-info" name="type" type="text" required="required" value="{{ values['type'] }}" placeholder="e.g. private"/>
+                    </div>
+                </div>
+            
+                
+                <div class="field">
+                    <label for="tel" class="label">Tel</label>
+                    <div class="control">
+                    <input class="input is-info" name="tel" type="tel" required="required" value="{{ values['tel'] }}" placeholder="e.g. (256) 226 55 09"/>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="city" class="label">City</label>
+                    <div class="control">
+                    <input class="input is-info" name="city" type="text" required="required" value="{{ values['city'] }}" placeholder=""/>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="address" class="label">Address</label>
+                    <div class="control">
+                    <input class="input is-info" name="address" type="text" required="required" value="{{ values['address'] }}" placeholder=""/>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label for="email" class="label">Email</label>
+                    <div class="control">
+                    <p class="control has-icons-left">
+                    <input class="input is-info" type="email" name="email" required="required" value="{{ values['email'] }}" placeholder="dr_example@gmail.com"/>
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                    </p>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="password"class="label">Password</label>
+                    <div class="control">
+                        <p class="control has-icons-left">
+                        <input class="input is-info" type="password" name="password" placeholder="Password" required="required" value="{{ values['password'] }}"/>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        </p>
+                    </div>
+                </div>
+              
+                <button class="button is-block is-info is-large is-fullwidth">Sign-up</button>
+                   
+             
+                </form>
+        </div>
+    </div>
+</div>
+</section>
+
+  {% endblock %}

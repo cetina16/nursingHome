@@ -18,12 +18,12 @@ def create_app():
     app = Flask(__name__)
 
     app.config.from_object("settings")
-    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+    #app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
     app.add_url_rule("/", view_func=views.home)
 
     db = MySQLdb.connect(host = "localhost", user ="root", passwd = "1616")
-
+    app.add_url_rule( "/signup", view_func=views.signup_page, methods=["GET", "POST"])
     app.add_url_rule( "/diseases", view_func=views.diseases_page, methods=["GET", "POST"])
     app.add_url_rule( "/residents", view_func=views.residents_page, methods=["GET", "POST"])
     app.add_url_rule( "/nurses", view_func=views.nurses_page, methods=["GET", "POST"])
@@ -32,17 +32,12 @@ def create_app():
     app.add_url_rule("/disease_edit", view_func=views.disease_add_page, methods=["GET", "POST"]  )
     app.add_url_rule("/diseases/<int:disease_key>", view_func=views.disease_page)
     app.add_url_rule("/nurses/1", view_func=views.nurse_page)
-    app.add_url_rule(
-        "/diseases/<int:disease_key>/edit",
-        view_func=views.disease_edit_page,
-        methods=["GET", "POST"],
-    )
+    app.add_url_rule("/diseases/<int:disease_key>/edit", view_func=views.disease_edit_page, methods=["GET", "POST"])
 
-    app.add_url_rule(
-        "/login", view_func=views.login_page, methods=["GET", "POST"]
-    )
+    app.add_url_rule("/login", view_func=views.login_page, methods=["GET", "POST"])
     app.add_url_rule("/logout", view_func=views.logout_page)
     app.add_url_rule("/filter", view_func=views.filter_page)
+    app.add_url_rule("/review", view_func=views.review_page)
  
     lm.init_app(app)
     lm.login_view = "login_page" 

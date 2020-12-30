@@ -9,8 +9,6 @@ from passlib.hash import pbkdf2_sha256 as hasher
 from flask_login import login_user,logout_user
 from flask_mysqldb import MySQLdb
 
-
-
 def home():
     today = date.today()
     date_time = today.strftime("%m/%d/%Y")
@@ -176,3 +174,57 @@ def nurse_page():  # this will take parameter
 
 def filter_page():
     return render_template("filter.html")
+def review_page():
+    return render_template("review.html")
+    
+def signup_page():
+    if request.method == "GET":
+        values = {"name": "", "homename": "","city":"", "email":"","password":"",
+        "type":"", "address":"", "tel":""
+        }
+        return render_template(
+            "signup.html", values = values,
+        )
+    else:
+        form_name = request.form["name"] 
+        form_homename = request.form["homename"]
+        form_city = request.form["city"]
+        form_email = request.form["email"]
+        form_password = request.form["password"]
+        form_address = request.form["address"]
+        form_tel = request.form["tel"]
+        form_type = request.form["type"]
+        
+        name = str(form_name)
+        homename = str(form_homename)
+        city = str(form_city)
+        email = str(form_email)
+        password = str (form_password)
+        address = str(form_address)
+        type_ = str (form_type)
+        tel = str(form_tel)
+
+        hashed_password = hasher.hash(password)
+    
+        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+        cursor = db.cursor()
+
+        cursor.execute("DROP TABLE IF EXISTS Doctor")
+        cursor.execute("DROP TABLE IF EXISTS Nursinghome")
+        
+        cursor.execute("CREATE TABLE Nursinghome(homeid INT AUTO_INCREMENT,name VARCHAR(40) NOT NULL,city VARCHAR(40) NOT NULL,type VARCHAR(40) NOT NULL,address VARCHAR(40) NOT NULL,tel VARCHAR(40) NOT NULL,PRIMARY KEY (homeid))")
+        cursor.execute("CREATE TABLE Doctor(doctorid INT AUTO_INCREMENT,email VARCHAR(40) UNIQUE,name VARCHAR (40) NOT NULL ,password VARCHAR (64)  NOT NULL ,nursinghomeid INT,FOREIGN KEY (nursinghomeid)  REFERENCES Nursinghome(homeid) ON DELETE CASCADE ON UPDATE CASCADE,PRIMARY KEY (doctorid))")
+
+        line1 = "INSERT INTO Nursinghome(name,city,type,address,tel) VALUES (%s,%s,%s,%s,%s)"
+        data1 = (homename,city,type_,address,tel)
+        cursor.execute(line1, data1)
+        
+        line2 = "INSERT INTO Doctor(name,email,password) VALUES (%s,%s,%s)"
+        data2 = (name,email,hashed_password)
+        cursor.execute(line2, data2)
+        db.commit()
+        cursor.close()
+    return redirect(url_for("login_page"))
+
+
+     

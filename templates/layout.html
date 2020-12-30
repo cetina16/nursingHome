@@ -11,52 +11,83 @@
   </head>
   <body>
     <header>
-      <nav class="navbar" aria-label="main navigation">
+      <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-          <span class="navbar-item">
-            <a class="button is-success" href="{{ url_for('home') }}">Home</a>
-          </span>
-          <span class="navbar-item">
-            {% if not current_user.is_authenticated %}
-              <a class="button is-success" href="{{ url_for('login_page') }}">Log in</a>
-            {% endif %}
-            
-            </span>
-            {% if current_user.is_admin %}
-          <span class="navbar-item">
-            <a class="button is-dark" href="{{ url_for('diseases_page') }}">List Diseases</a>
-          </span>
-        
-          <span class="navbar-item">
-            <a class="button is-dark" href="{{ url_for('disease_add_page') }}">Add Disease</a>
-          </span>
+          <a class="navbar-item" href="{{ url_for('home')}}">
+            <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+          </a>
 
-          <span class="navbar-item">
-            <a class="button is-dark" href="{{ url_for('residents_page') }}">List Residents</a>
-          </span>
-          <span class="navbar-item">
-            <a class="button is-dark" href="{{ url_for('resident_add_page') }}">Add Resident</a>
-          </span>
-          <span class="navbar-item">
-            <a class="button is-dark" href="{{ url_for('nurses_page') }}">List Nurses</a>
-          </span>
-          <span class="navbar-item">
-            <a class="button is-dark" href="{{ url_for('nurse_add_page') }}">Add Nurse</a>
-          </span>
-          <span class="navbar-item">
-            <a class="button is-dark" href="{{ url_for('filter_page') }}">Filter</a>
-          </span>
-          {% endif %}
-          <span class="navbar-item">
-          {% if current_user.is_authenticated %}
-              {{ current_user.username }}
-              <a class="button is-danger" href="{{ url_for('logout_page') }}">Log out</a>
+          <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+          <div class="navbar-start">
+            <a class="navbar-item" href="{{ url_for('home') }}">Home</a>
+        
+            {% if current_user.is_admin %}
+            <a class="navbar-item" href="{{ url_for('filter_page') }}">
+              Filter
+            </a>
+            <a class="navbar-item" href="{{ url_for('review_page') }}">
+              Review
+            </a>
+
+            <div class="navbar-item has-dropdown is-hoverable">
+              <a class="navbar-link">
+                More
+              </a>
+
+              <div class="navbar-dropdown">
+                <a class="navbar-item"  href="{{ url_for('diseases_page') }}">
+                  List Diseases
+                </a>
+                <a class="navbar-item" href="{{ url_for('disease_add_page') }}">
+                  Add Disease
+                </a>
+                <a class="navbar-item"href="{{ url_for('residents_page') }}">
+                  List Residents
+                </a>
+                <a class="navbar-item" href="{{ url_for('resident_add_page') }}">
+                  Add Resident
+                </a>
+                <a class="navbar-item" href="{{ url_for('nurses_page') }}">
+                  List Nurses
+                </a>
+                <a class="navbar-item" href="{{ url_for('nurse_add_page') }}">
+                  Add Nurse
+                </a>
+                <hr class="navbar-divider">
+                <a class="navbar-item">
+                  Contact
+                </a>
+              </div>
+            </div>
             {% endif %}
-          </span>
+          </div>
+
+          <div class="navbar-end">
+            <div class="navbar-item">
+              <div class="buttons">
+                {% if not current_user.is_authenticated %}
+                <a class="button is-primary"  href="{{ url_for('signup_page') }}">
+                  <strong>Sign up</strong>
+                </a>  
+                <a class="button is-light" href="{{ url_for('login_page') }}">Log in</a>
+                {% endif %}
+                {% if current_user.is_authenticated %}
+                {{ current_user.username }}
+                <a class="button is-light" href="{{ url_for('logout_page') }}">Log out</a>
+              {% endif %}
+              </div>
+            </div>
+          </div>
         </div>
       </nav>
     </header>
-
     <main>
       {% for message in get_flashed_messages() %}
       <div class="notification is-info">{{ message }}</div>
@@ -75,3 +106,6 @@
     </footer>
   </body>
 </html>
+
+
+
