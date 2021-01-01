@@ -1,51 +1,65 @@
 {% extends "layout.html" %}
-{% block title %}Sign-up{% endblock %}
+{% block title %} Signup {% endblock %}
 {% block content %}
-
+{% if not islogged %}
 <script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
 <section class="hero">
-      <div class="container has-text-centered">
-        <div class="column is-4 is-offset-4">
+<div class="container has-text-centered">
+    <div class="column is-4 is-offset-4">
+        <h5 class="title has-text-grey"> If you are a nursing home doctor, sign-up to follow and monitor working nurses, nursing home residents and their illnesses!</h5>
+
         <h3 class="title has-text-grey">Sign-up</h3>
           <div class="box">
                 <form action="" method="post" name="signup">
                 <div class="field">
                     <label for="name" class="label">Name</label>
                     <div class="control">
-                    <input class="input is-info" name="name" required="required" type="text" placeholder="Full Name" value="{{ values['name'] }}"/>
+                    <input class="input is-info" name="name" required="required" type="text" placeholder="Full Name" maxlength = "40" value="{{ values['name'] }}"/>
                     </div>
                 </div>
                 <div class="field">
-                    <label for="homename" class="label">Nursing Home Name</label>
+                    <label for="homename" class="label">Home Name</label>
                     <div class="control">
-                    <input class="input is-info" name="homename" type="text" required="required" value="{{ values['homename'] }}" placeholder=""/>
+                    <input class="input is-info" name="homename" type="text" required="required" value="{{ values['homename'] }}"  maxlength = "40" placeholder="e.g. Care Home"/>
                     </div>
                 </div>
                 <div class="field">
                     <label for="type" class="label">Type</label>
                     <div class="control">
-                    <input class="input is-info" name="type" type="text" required="required" value="{{ values['type'] }}" placeholder="e.g. private"/>
+                      <label class="radio">
+                        <input type="radio" type="text"  name="type" required="required" value="private">
+                        Private
+                      </label>
+                      <label class="radio">
+                        <input type="radio" type="text"  name="type" checked required="required" value="state">
+                        State
+                      </label>
+                      <label class="radio">
+                        <input type="radio" type="text"  name="type" required="required" value="other">
+                        Other
+                      </label>
+                     
                     </div>
                 </div>
             
                 
                 <div class="field">
-                    <label for="tel" class="label">Tel</label>
+                    <label for="tel" class="label">Telephone number</label>
                     <div class="control">
-                    <input class="input is-info" name="tel" type="tel" required="required" value="{{ values['tel'] }}" placeholder="e.g. (256) 226 55 09"/>
+                    <input class="input is-info" name="tel" type="tel" required="required" value="{{ values['tel'] }}" maxlength = "11" placeholder="e.g. 02128981122"/>
                     </div>
                 </div>
 
                 <div class="field">
                     <label for="city" class="label">City</label>
                     <div class="control">
-                    <input class="input is-info" name="city" type="text" required="required" value="{{ values['city'] }}" placeholder=""/>
+                    <input class="input is-info" name="city" type="text" required="required" value="{{ values['city'] }}"  maxlength = "40" placeholder=""/>
                     </div>
                 </div>
                 <div class="field">
                     <label for="address" class="label">Address</label>
                     <div class="control">
-                    <input class="input is-info" name="address" type="text" required="required" value="{{ values['address'] }}" placeholder=""/>
+                    <input class="input is-info" name="address" type="text" required="required" value="{{ values['address'] }}" maxlength = "90" placeholder=""/>
                     </div>
                 </div>
                 
@@ -72,6 +86,17 @@
                         </p>
                     </div>
                 </div>
+                <div class="field">
+                    <label for="password"class="label">Verify Password</label>
+                    <div class="control">
+                        <p class="control has-icons-left">
+                        <input class="input is-info" type="password" name="password2" placeholder="Password" required="required" value="{{ values['password2'] }}"/>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        </p>
+                    </div>
+                 </div>
               
                 <button class="button is-block is-info is-large is-fullwidth">Sign-up</button>
                    
@@ -79,7 +104,13 @@
                 </form>
         </div>
     </div>
+
+   
+
+
+
+
 </div>
 </section>
-
-  {% endblock %}
+{% endif %}
+{% endblock %}

@@ -1,19 +1,30 @@
 {% extends "layout.html" %}
-{% block title %}Nurse List{% endblock %}
+{% block title %} Nurses {% endblock %}
 {% block content %}
-    <h1 class="title">Nurses</h1>
+{% if islogged %}
+    <h1 class="title">
+      <span class="icon is-small">
+        <i class="fas fa-user-nurse" aria-hidden="true"></i>
+      </span>
+      Nurses
+   </h1>
+    <div class="box">
     <form action="" method="post" name="nurse_list">
-    <table class="table is-striped is-fullwidth">
+    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
     <tr>
       <td> </td>
-      <td><h2 class = "subtitle"> Name</h2></td>
-      <td><h2 class = "subtitle">Capacity</h2></td>
+      <td><h3 class = "subtitle"> Name</h2></td>
+      <td><h3 class = "subtitle">Capacity</h2></td>
+      <td><h3 class = "subtitle"> Type</h2></td>
+      <td><h3 class = "subtitle">Address</h2></td>
+      <td><h3 class = "subtitle">Tel</h2></td>
+
     </tr>
     {% for row in values %}
     <tr> 
       <td>
       <label class="checkbox">
-        <input type="checkbox"/>
+        <input type="checkbox" name="nurse_keys" value="{{ nurse_key }}"/>
       </label>
     </td>
       {% for d in row %}
@@ -33,5 +44,6 @@
         </div>
       </div>
     </form>
-
-{% endblock %}
+  </div>
+  {% endif %}
+  {% endblock %}

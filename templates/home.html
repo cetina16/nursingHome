@@ -1,16 +1,38 @@
 {% extends "layout.html" %}
-{% block title %}Home{% endblock %}
+{% block title %} Home {% endblock %}
 {% block content %}
-    <section class="hero">
-      <div class="hero-body">
-        <div class="container has-text-centered">
-          <h1 class="title">DISEASE and TREATMENT MONITORING SYSTEM</h1>
-          <p class="subtitle">{{ date }} - Welcome to Nursing Home!</p>
-          {% if current_user.is_authenticated %}
-          <p class="subtitle"> Have a nice day Dr. {{ current_user.name }}! </p>
+
+  <h1 class="title">DISEASE and TREATMENT MONITORING SYSTEM</h1>
+          <p class="subtitle">{{ date }}</p>
+          <p class = "subtitle">Welcome!</p>
+          {% if islogged %}
+          <p class = "subtitle">{{ name }}</p>
           {% endif %}
-        
-        </div>
-      </div>
-    </section>
+          <div class="box">
+            <article class="media">
+              <div class="media-left">
+                <figure class="image is-128x128">
+                  <img class="is-rounded" src="../static/itu.jpg" alt="Image">
+                </figure>
+              </div>
+              <div class="media-content">
+                <div class="content">
+                  <p>
+                    <strong>Ayse Betul Cetin</strong> <small>150180730</small> 
+                    <br>
+                    This project was prepared within the scope of BLG317E- Database Systems course. 
+                    <br>The aim of the project is to benefit digitalization of follow-up in institutions such as nursing homes where the elderly stay and their health is monitored.
+                    <br> <br> Sign up to create your own system.
+                    <br> Log in if you have registered before.
+                    <br> <br> 
+                  </p>
+                </div>
+         
+              </div>
+            </article>
+          </div>
+       
+
+          
+             
 {% endblock %}
