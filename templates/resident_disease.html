@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Add disease {% endblock %}
+{% block content %}
+  {% if islogged %}
+  <h1 class="title">
+    <span class="icon is-small">
+      <i class="fas fa-virus" aria-hidden="true"></i>
+    </span>
+    Add Disease
+  </h1>
+  <div class="box">
+    <form action="" method="post" name="disease_resident">
+      <div class="field">
+        <script type=text/javascript src="{{url_for('static', filename='main.js') }}"></script>
+        <label for="name" class="label">   Select Disease   </label> 
+        <div class="control">
+          <div class = "select">
+            <select id="diseaseid" name="diseaseid">
+                {% for disease in diseases %}
+                <option value="{{disease[0]}}"> 
+                  {{disease[1]}}
+                </option>
+                {% endfor %}
+              </select>
+          </div>
+        </div>
+      </div> 
+      <div class="field">
+        <label for="startdate" class="label">   Start Date   </label> 
+        <div class="control">
+          <input type="date" name="startdate" class="input" required="required" value="{{ values['startdate'] }}"/>
+        </div>
+      </div>
+      <div class="field">
+        <label for="enddate" class="label">   End Date   </label> 
+        <div class="control">
+          <input type="date" name="enddate" class="input" required="required"  value="{{ values['enddate'] }}"/>
+        </div>
+      </div>
+   
+     
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-light is-medium">  Add  </button>
+        </div>
+      </div>
+   </form>
+  </div>
+  {% endif %}
+  {% endblock %}

@@ -38,24 +38,20 @@
                href="{{ request.path }}/edit">Edit</a>
           </div>
         </div>
+        {% if residents%}
         <h1 class="title">Assigned Residents: </h1>
-        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-          <tr>
-            <th>Ahmet Yıldız</th>
-          </tr>
-          <tr>
-            <th>Gülsüm Tok</th>
-          </tr>
-          <tr>
-            <th>Hasan Ali Yazgı</th>
-          </tr>
-       
-          
-        </table>
         {% endif %}
-           
+        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+          {% for name in residents %}
+          <tr>
+            <th>{{ name[0] }}</th>
+          </tr>
+          {% endfor %}    
+        </table>
+          
       </div>
    </div>
   </div>
 </section>
+{% endif %}
 {% endblock %}

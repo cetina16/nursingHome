@@ -10,4 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   var e = document.getElementById("nurseID");
   var strNurse = e.value;
+
+  var p = document.getElementById("period");
+  var strPeriod = p.value;
   
+  var d = document.getElementById("diseaseid");
+  var strDisease = d.value;

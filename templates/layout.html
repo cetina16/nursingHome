@@ -35,7 +35,7 @@
               <i class="fas fa-filter" aria-hidden="true"></i>  Filter
             </a>
             <a class="navbar-item" href="{{ url_for('review_page') }}">
-              <i class="fas fa-chart-bar" aria-hidden="true"></i>  Analysis
+              <i class="fas fa-id-card" aria-hidden="true"></i>  Info
             </a>
 
             <div class="navbar-item has-dropdown is-hoverable">
@@ -50,22 +50,22 @@
                 <a class="navbar-item" href="{{ url_for('disease_add_page') }}">
                   Add Disease
                 </a>
+                <hr class="navbar-divider">
                 <a class="navbar-item"href="{{ url_for('residents_page') }}">
                   List Residents
                 </a>
                 <a class="navbar-item" href="{{ url_for('resident_add_page') }}">
                   Add Resident
                 </a>
+                <hr class="navbar-divider">
                 <a class="navbar-item" href="{{ url_for('nurses_page') }}">
                   List Nurses
                 </a>
                 <a class="navbar-item" href="{{ url_for('nurse_add_page') }}">
                   Add Nurse
                 </a>
-                <hr class="navbar-divider">
-                <a class="navbar-item">
-                  Contact
-                </a>
+                
+                
               </div>
             </div>
             {% endif %}

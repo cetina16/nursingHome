@@ -1,32 +1,46 @@
-
 {% extends "layout.html" %}
-{% block title %}Disease list{% endblock %}
+{% block title %} Diseases {% endblock %}
 {% block content %}
-    <h1 class="title">Diseases</h1>
-    {% if diseases %}
+{% if islogged %}
+    <h1 class="title">
+      <span class="icon is-small">
+        <i class="fas fa-user" aria-hidden="true"></i>
+      </span>
+      Diseases
+   </h1>
+    <div class="box">
     <form action="" method="post" name="disease_list">
-      <table class="table is-striped is-fullwidth">
-        {% for disease_key, disease in diseases %}
-        <tr>
-          <td>
-            <label class="checkbox">
-              <input type="checkbox" name="disease_keys" value="{{ disease_key }}"/>
-            </label>  
-            <a href="{{ url_for('disease_page', disease_key=disease_key) }}">
-             {{ disease.name }} ----
-              Risk level: {{ disease.risklevel }} ----
-              {% if disease.period %} Period: {{ disease.period }}  {% endif %}
-            </a>
-          </td>
-        </tr>
-        {% endfor %}
-      </table>
+    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+    <tr>
+      <td> </td>
+      <td><h3 class = "subtitle"> Name</h2></td>
+      <td><h3 class = "subtitle"> Period  </h2></td>
+      <td><h3 class = "subtitle"> Risk Level</h2></td>
 
+    </tr>
+    {% for row in values %}
+    <tr> 
+      <td>
+        <label class="checkbox">
+          <input type="checkbox" name="disease_ids" value="{{ row[0] }}"/>
+        </label>
+      </td>
+      <td>  <a href="{{ url_for('disease_page',diseaseid=row[0]) }}">
+        {{ row[1] }}
+      </a>
+    </td>
+      <td> {{row[2] }}</td> 
+      <td> {{row[3]}}</td>
+    
+    </tr>
+    {% endfor %}
+      </table>
       <div class="field is-grouped">
         <div class="control">
           <button class="button is-danger is-small">Delete</button>
         </div>
       </div>
     </form>
-    {% endif %}
-{% endblock %}
+  </div>
+  {% endif %}
+  {% endblock %}
