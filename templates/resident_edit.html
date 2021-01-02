@@ -1,9 +1,15 @@
-{% extends "layout.html" %}
-{% block title %}Add Resident{% endblock %}
+ {% extends "layout.html" %}
+{% block title %}Add Resident {% endblock %}
 {% block content %}
-    <h1 class="title">Add resident</h1>
-
-    <form action="" method="post" name="disease_edit">
+  {% if islogged %}
+  <h1 class="title">
+    <span class="icon is-small">
+      <i class="fas fa-user-plus" aria-hidden="true"></i>
+    </span>
+    Add Resident
+  </h1>
+  <div class="box">
+    <form action="" method="post" name="nurse_edit">
       <div class="field">
         <label for="name" class="label">   Name   </label>
         <div class="control">
@@ -19,41 +25,64 @@
         </div>
       </div>
       <div class="field">
-        <label for="gender" class="label">  Gender  </label>
-        <div class="select">
-          <select>
-            <option>Female</option>
-            <option>Male</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="tel" class="label">Tel</label>
+        <label for="type" class="label">Gender</label>
         <div class="control">
-        <input class="input is-info" name="tel" type="tel" required="required" value="{{ values['tel'] }}" placeholder="e.g. (256) 226 55 09"/>
+          <label class="radio">
+            <input type="radio" type="text"  name="gender" required="required" value="female">
+            Female
+          </label>
+          <label class="radio">
+            <input type="radio" type="text"  name="gender" checked required="required" value="male">
+            Male
+          </label>
+        </div>
+     </div>
+     <script type=text/javascript src="{{url_for('static', filename='main.js') }}"></script>
+      <div class="field">
+        <label for="nurseid" class="label"> Select Nurse  </label>
+        <div class="control">
+          <div class = "select">
+            <select id="nurseID" name="nurseid">
+              {% for nurse in nurses %}
+              <option value="{{nurse[0]}}"> 
+                {{nurse[1]}}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+   
         </div>
       </div>
 
+   
      <div class="field">
-       <div class="control">
-        <label for="bedridden" class="label">Is the resident bedridden?</label>
-          <label class="radio">
-            <input type="radio" name="question">
-                Yes
-          </label>
-          <label class="radio">
-            <input type="radio" name="question" checked>
-              No
-          </label>
+        <label for="tel" class="label">Telephone number</label>
+        <div class="control">
+        <input class="input" name="tel" type="tel" required="required" maxlength = "11" minlength = "11" value="{{ values['tel'] }}" placeholder="e.g. 0 (539) 937 55 09"/>
         </div>
-      </div>
+     </div>
+     <div class="field">
+      <div class="control">
+       <label for="bedridden" class="label">Is the resident bedridden?</label>
+         <label class="radio">
+           <input type="radio" name="bedridden" value="Yes">
+               Yes
+         </label>
+         <label class="radio">
+           <input type="radio" name="bedridden" value="No" checked>
+             No
+         </label>
+       </div>
+     </div>
 
+     
 
       <div class="field is-grouped">
         <div class="control">
-          <button class="button is-light is-small">  Save  </button>
+          <button class="button is-light is-medium">  Save  </button>
         </div>
       </div>
-    </form>
-{% endblock %}
+   </form>
+  </div>
+  {% endif %}
+  {% endblock %}

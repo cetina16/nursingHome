@@ -16,13 +16,14 @@ def create_app():
 
     app.add_url_rule("/nurse_edit", view_func=views.nurse_add_page, methods=["GET", "POST"]  )
     app.add_url_rule("/nurses", view_func=views.nurses_page, methods=["GET", "POST"])
+    app.add_url_rule("/nurse/<int:nurseid>", view_func=views.nurse_page, methods=["GET", "POST"])
+    app.add_url_rule("/nurse/<int:nurseid>/edit", view_func=views.nurse_edit_page, methods=["GET", "POST"])
 
     app.add_url_rule("/diseases", view_func=views.diseases_page, methods=["GET", "POST"])
     app.add_url_rule("/residents", view_func=views.residents_page, methods=["GET", "POST"])
     app.add_url_rule("/resident_edit", view_func=views.resident_add_page, methods=["GET", "POST"]  )
     app.add_url_rule("/disease_edit", view_func=views.disease_add_page, methods=["GET", "POST"]  )
     app.add_url_rule("/diseases/<int:disease_key>", view_func=views.disease_page)
-    app.add_url_rule("/nurses/blabla", view_func=views.nurse_page)
     app.add_url_rule("/diseases/<int:disease_key>/edit", view_func=views.disease_edit_page, methods=["GET", "POST"])
 
     return app

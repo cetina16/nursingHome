@@ -1,16 +1,43 @@
 {% extends "layout.html" %}
-{% block title %}Resident List{% endblock %}
+{% block title %} Residents {% endblock %}
 {% block content %}
-    <h1 class="title">Residents</h1>
-
-    <table class="table is-striped is-fullwidth">
-    {% for row in values %}
+{% if islogged %}
+    <h1 class="title">
+      <span class="icon is-small">
+        <i class="fas fa-user" aria-hidden="true"></i>
+      </span>
+      Residents
+   </h1>
+    <div class="box">
+    <form action="" method="post" name="resident_list">
+    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
     <tr>
-        {% for d in row %}
-        <td>{{ d }}</td>
-         {% endfor %}
+      <td> </td>
+      <td><h3 class = "subtitle"> Name</h2></td>
+      <td><h3 class = "subtitle"> Age</h2></td>
+      <td><h3 class = "subtitle"> Gender</h2></td>
+
+    </tr>
+    {% for row in values %}
+    <tr> 
+      <td>
+        <label class="checkbox">
+          <input type="checkbox" name="resident_ids" value="{{ row[0] }}"/>
+        </label>
+      </td>
+      <td> {{row[1]}}</td>
+      <td> {{row[2] }}</td> 
+      <td> {{row[3]}}</td>
+    
     </tr>
     {% endfor %}
       </table>
-
-{% endblock %}
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-danger is-small">Delete</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+  {% endblock %}

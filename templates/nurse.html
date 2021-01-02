@@ -1,25 +1,61 @@
 {% extends "layout.html" %}
 {% block title %}Nurse{% endblock %}
 {% block content %}
-    <h1 class="title">Nurse</h1>
-
-    <table class="table">
-      <tr>
-        <th>Name:</th>
-        <td>{{ nurse.name }}</td>
-      </tr>
-      <tr>
-        <th>Capacity:</th>
-        <td>{{ nurse.capacity }}</td>
-      </tr>
-
-      {% endif %}
-    </table>
-
-    <div class="field is-grouped">
-      <div class="control">
-        <a class="button is-primary is-outlined is-small"
-           href="{{ request.path }}/edit">Edit</a>
+{% if islogged %}
+<section class="hero">
+  <div class="hero-body">
+    <div class="container has-text-centered"> 
+      <div class="column is-4 is-offset-4">
+        <h1 class="title">Nurse</h1>
+        <div class="box">
+        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+          <tr>
+            <th>Name:</th>
+            <td>{{values[1] }}</td>
+          </tr>
+          <tr>
+            <th>Capacity:</th>
+            <td>{{ values[2] }}</td>
+          </tr>
+          <tr>
+            <th>Type:</th>
+            <td>{{ values[3] }}</td>
+          </tr>
+          <tr>
+            <th>Address:</th>
+            <td>{{ values[4] }}</td>
+          </tr>
+          <tr>
+            <th> Tel:</th>
+            <td>{{ values[5] }}</td>
+          </tr>
+        </table>
+        </div>
+  
+        <div class="field is-grouped">
+          <div class="control">
+            <a class="button is-medium"
+               href="{{ request.path }}/edit">Edit</a>
+          </div>
+        </div>
+        <h1 class="title">Assigned Residents: </h1>
+        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+          <tr>
+            <th>Ahmet Yıldız</th>
+          </tr>
+          <tr>
+            <th>Gülsüm Tok</th>
+          </tr>
+          <tr>
+            <th>Hasan Ali Yazgı</th>
+          </tr>
+       
+          
+        </table>
+        {% endif %}
+           
       </div>
-    </div>
+   </div>
+  </div>
+</section>
 {% endblock %}

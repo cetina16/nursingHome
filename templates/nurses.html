@@ -23,17 +23,20 @@
     {% for row in values %}
     <tr> 
       <td>
-      <label class="checkbox">
-        <input type="checkbox" name="nurse_keys" value="{{ nurse_key }}"/>
-      </label>
-    </td>
-      {% for d in row %}
-      <td>
-        <a href="{{ url_for('nurse_page') }}">
-        {{ d }}
-        </a>
+        <label class="checkbox">
+          <input type="checkbox" name="nurse_ids" value="{{ row[0] }}"/>
+        </label>
+      </td>
+    
+      <td> <a href="{{ url_for('nurse_page',nurseid=row[0]) }}">
+        {{ row[1] }}
+      </a>
       </td> 
-      {% endfor %} 
+      <td> {{row[2]}}</td>
+      <td> {{row[3]}}</td>
+      <td> {{row[4]}}</td>
+      <td> {{row[5]}}</td>
+    
 
     </tr>
     {% endfor %}

@@ -94,11 +94,16 @@
     <main>
       <section class="section">
         <div class="content">
-          
+          <script type=text/javascript src="{{url_for('static', filename='main.js') }}"></script>
           {% for message in get_flashed_messages() %}
-            <div class="notification">
+    
+          <div class="column is-one-quarter"> 
+            <div class="notification"> 
+            <button class="delete"></button>
             {{message}}
             </div>
+          </div>
+
           {% endfor %}
 
 

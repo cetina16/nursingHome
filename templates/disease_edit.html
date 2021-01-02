@@ -1,9 +1,15 @@
 {% extends "layout.html" %}
-{% block title %}Add disease{% endblock %}
+{% block title %}}Add disease {% endblock %}
 {% block content %}
-    <h1 class="title">Add disease</h1>
-
-    <form action="" method="post" name="disease_edit">
+  {% if islogged %}
+  <h1 class="title">
+    <span class="icon is-small">
+      <i class="fas fa-plus" aria-hidden="true"></i>
+    </span>
+    Add Disease
+  </h1>
+  <div class="box">
+    <form action="" method="post" name="nurse_edit">
       <div class="field">
         <label for="name" class="label">   Name   </label>
         <div class="control">
@@ -14,21 +20,27 @@
       <div class="field">
         <label for="risklevel" class="label">   Risk Level  </label>
         <div class="control">
-          <input type="number" name="risklevel" class="input"
-                 min=1 max=5 required="required" value="{{ values['risklevel'] }}"/>
-        </div>
-      </div>
-      <div class="field">
-        <label for="period" class="label">  Period  </label>
-        <div class="control">
-          <input type="number" name="period" class="input" value="{{ values['period'] }}"/>
+          <input type="number" name="risklevel" class="input" min=0 max=5
+                  required="required" value="{{ values['risklevel'] }}"/>
         </div>
       </div>
 
-      <div class="field is-grouped">
+      <div class="field">
+        <label for="period" class="label">   Period  </label>
         <div class="control">
-          <button class="button is-light is-small">  Save  </button>
+          <input type="text" name="period" class="input" 
+                  required="required" value="{{ values['period'] }}"/>
         </div>
       </div>
-    </form>
-{% endblock %}
+   
+     
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-light is-medium">  Save  </button>
+        </div>
+      </div>
+   </form>
+  </div>
+  {% endif %}
+  {% endblock %}
