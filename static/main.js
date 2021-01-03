@@ -16,3 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
   var d = document.getElementById("diseaseid");
   var strDisease = d.value;
+
+  var f = document.getElementById("filter_disease");
+  var strFilter = f.value;

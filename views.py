@@ -180,7 +180,7 @@ def resident_add_page():
         form_gender = request.form["gender"]
         form_tel = request.form["tel"]
         form_bedridden = request.form["bedridden"]
-        form_nurseid = request.form["nurseid"]    # FIX!!!!!!!!!!!!!
+        form_nurseid = request.form["nurseid"] 
         name = str(form_name)
         age = str(form_age)
         gender = str (form_gender)
@@ -225,20 +225,31 @@ def residents_page():
 def resident_page(residentid): 
     global LOGGED
     db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM Resident WHERE residentid=%s",(residentid,) )
-    values = cursor.fetchone()
-    cursor.execute("SELECT name FROM Nurse WHERE nurseid=%s",(values[6],))
-    nurse_name = cursor.fetchone()
-    query = """SELECT Diseaseowners.diseaseid,Disease.name,Diseaseowners.startdate,Diseaseowners.enddate
-                    FROM Disease INNER JOIN Diseaseowners ON Disease.diseaseid=Diseaseowners.diseaseid 
-                    WHERE residentid={0}
-                """.format(residentid)
-    cursor.execute(query)
-    diseases = cursor.fetchall()
-
-    cursor.close()
-    return render_template("resident.html",residentid=residentid, values=values,nurse_name=nurse_name,islogged=LOGGED,diseases=diseases)
+    if request.method == "GET":
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM Resident WHERE residentid=%s",(residentid,) )
+        values = cursor.fetchone()
+        cursor.execute("SELECT name FROM Nurse WHERE nurseid=%s",(values[6],))
+        nurse_name = cursor.fetchone()
+        query = """SELECT Diseaseowners.diseaseid,Disease.name,Diseaseowners.startdate,Diseaseowners.enddate
+                        FROM Disease INNER JOIN Diseaseowners ON Disease.diseaseid=Diseaseowners.diseaseid 
+                        WHERE residentid={0}
+                    """.format(residentid)
+        cursor.execute(query)
+        diseases = cursor.fetchall()
+        cursor.close()
+        return render_template("resident.html",residentid=residentid, values=values,nurse_name=nurse_name,islogged=LOGGED,diseases=diseases)
+    else:
+        cursor = db.cursor()
+        form_disease_ids = request.form.getlist("disease_ids")
+        for diseaseid in form_disease_ids:
+            cursor.execute("SELECT * FROM Diseaseowners WHERE residentid={0} AND diseaseid={1}".format(residentid,diseaseid))
+            data = cursor.fetchone() 
+            if data is not None:
+                cursor.execute("DELETE FROM Diseaseowners WHERE residentid={0} AND diseaseid={1}".format(residentid,diseaseid))
+                db.commit()
+        cursor.close()
+        return redirect(url_for("resident_page",residentid=residentid))
 
 def resident_edit_page(residentid):
     global LOGGED
@@ -354,10 +365,10 @@ def nurse_edit_page(nurseid):
         db.commit()
         cursor.close()
         return redirect(url_for("nurse_page", nurseid=nurseid,islogged=LOGGED))
- 
 
-def filter_page():
-    return render_template("filter.html",islogged=LOGGED)
+
+
+
 def review_page():
     return render_template("review.html",islogged=LOGGED)
     
@@ -534,8 +545,29 @@ def login_page():
             islogged = LOGGED
             flash("Wrong Email!")
             return redirect(url_for("login_page",islogged=islogged))
+def filter_page():
+    global LOGGED
+    global homeid
+    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    cursor = db.cursor()
+    if request.method == "GET":
+        cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
+        diseases = cursor.fetchall()
+        cursor.close()
+        residents = None
+        return render_template("filter.html", diseases=diseases, islogged=LOGGED,residents=residents)
+    else:
+        form_diseaseid = request.form["diseaseid"] 
+        query = """SELECT Resident.residentid, Resident.name
+                        FROM Resident INNER JOIN Diseaseowners ON Resident.residentid=Diseaseowners.residentid 
+                        WHERE diseaseid={0}
+                    """.format(form_diseaseid)
+        cursor.execute(query)
+        residents = cursor.fetchall()
+        cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
+        diseases = cursor.fetchall()
+        cursor.execute("SELECT name FROM Disease WHERE diseaseid={0}".format(form_diseaseid))
+        diseasename = cursor.fetchone()
+        cursor.close()
+        return render_template("filter.html",islogged=LOGGED,residents=residents,diseases=diseases,diseasename =diseasename)
 
-
-
-
-     
