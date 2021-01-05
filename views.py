@@ -366,11 +366,6 @@ def nurse_edit_page(nurseid):
         cursor.close()
         return redirect(url_for("nurse_page", nurseid=nurseid,islogged=LOGGED))
 
-
-
-
-def review_page():
-    return render_template("review.html",islogged=LOGGED)
     
 def signup_page():
     if request.method == "GET":
@@ -571,3 +566,20 @@ def filter_page():
         cursor.close()
         return render_template("filter.html",islogged=LOGGED,residents=residents,diseases=diseases,diseasename =diseasename)
 
+def review_page():
+    global LOGGED
+    global homeid
+    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    cursor = db.cursor()
+    cursor.execute("SELECT period FROM Disease WHERE homeid={0}".format(homeid))
+    periods = cursor.fetchall()
+    if request.method == "GET":
+        cursor.close()
+        return render_template("review.html", periods=periods, islogged=LOGGED)
+    else:
+        form_period = request.form["period"] 
+        query = "SELECT name FROM Disease WHERE period='{0}' and homeid={1}".format(form_period,homeid)
+        cursor.execute(query)
+        diseasenames = cursor.fetchall()
+        cursor.close()
+        return render_template("review.html",islogged=LOGGED, periods=periods,diseasenames =diseasenames,period=form_period)

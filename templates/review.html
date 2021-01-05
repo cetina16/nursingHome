@@ -1,56 +1,47 @@
 
 {% extends "layout.html" %}
-{% block title %} Home Informations {% endblock %}
+{% block title %} Create Report {% endblock %}
 {% block content %}
-    <h1 class="title">Home Informations</h1>
-    <div class="columns">
-        <div class="column">
-          <div class="box">
-            <article class="media">
-              <div class="media-content">
-                <div class="content">
-                  <p>
-                    <strong>Residents</strong> 
-                    <br>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
-                  </p>
+{% if islogged %}
+<h1 class="title">Create a report - Select a time period </h1>
+<div class="box">
+    <form action="" method="post" name="nurse_edit">
+        <script type=text/javascript src="{{url_for('static', filename='main.js') }}"></script>
+        <div class="field">
+            <label for="periodid" class="label"> Select Period  </label>
+            <div class="control">
+                <div class = "select"> 
+                <select id="filter_period" name="period">
+                    {% for period in periods %}
+                    <option value="{{period[0]}}"> 
+                    {{period[0]}}
+                    </option>
+                    {% endfor %}
+                </select>
                 </div>
-              </div>
-            </article>
+            </div>
+        </div>
+        <div class="field is-grouped">
+            <div class="control">
+              <button class="button is-light is-medium">  Filter  </button>
+            </div>
           </div>
-        </div>
-        <div class="column">
-            <div class="box">
-                <article class="media">
-                  <div class="media-content">
-                    <div class="content">
-                      <p>
-                        <strong>Nurses </strong> 
-                        <br>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
-                      </p>
-                    </div>
-                    
-                  </div>
-                </article>
-              </div>
-        </div>
-        <div class="column">
-            <div class="box">
-                <article class="media">
-                  <div class="media-content">
-                    <div class="content">
-                      <p>
-                        <strong>Diseases</strong> 
-                        <br>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
-                      </p>
-                    </div>
-           
-                  </div>
-                </article>
-              </div>
-        </div>
+    </form>
+</div>
+{% if diseasenames%}
+<div class="box">
+        <h1 class="subtitle">Diseases/Activities to follow every {{period}}s :</h1>
+        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+            {% for diseasename in diseasenames %}
+            <tr> 
+        
+            <td> {{diseasename[0] }}</td> 
+        
+            </tr>
+            {% endfor %}
+          </table>
+</div>
+{% endif %}
 
-    </div>
+{% endif %}
 {% endblock %}

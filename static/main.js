@@ -19,3 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   var f = document.getElementById("filter_disease");
   var strFilter = f.value;
+
+  var pe = document.getElementById("filter_period");
+  var strPeriod = pe.value;
