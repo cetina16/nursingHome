@@ -12,6 +12,7 @@
           </span>
           {{ name }}</p>
           {% endif %}
+          {% if not islogged %}
           <div class="box">
             <article class="media">
               <div class="media-left">
@@ -35,6 +36,8 @@
               </div>
             </article>
           </div>
+          {% endif %}
+          {% if islogged %}
           <h1 class="title">Home Information</h1>
     <div class="columns">
         <div class="column">
@@ -45,8 +48,14 @@
                   <p>
                     <strong>Residents</strong> 
                     <br>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
                   </p>
+                  <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                    {% for resident in residents %}
+                    <tr> 
+                    <td> {{resident[0]}} </td> 
+                     </tr>
+                    {% endfor %}
+                  </table>
                 </div>
               </div>
             </article>
@@ -60,8 +69,15 @@
                       <p>
                         <strong>Nurses </strong> 
                         <br>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
+                      
                       </p>
+                      <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        {% for nurse in nurses %}
+                        <tr> 
+                        <td> {{nurse[0]}} </td> 
+                         </tr>
+                        {% endfor %}
+                      </table>
                     </div>
                     
                   </div>
@@ -76,8 +92,15 @@
                       <p>
                         <strong>Diseases</strong> 
                         <br>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
+                       
                       </p>
+                      <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        {% for disease in diseases %}
+                        <tr> 
+                        <td> {{disease[0]}} </td> 
+                         </tr>
+                        {% endfor %}
+                      </table>
                     </div>
            
                   </div>
@@ -86,6 +109,7 @@
         </div>
 
     </div>
+    {% endif %}
        
 
           

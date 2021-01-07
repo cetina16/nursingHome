@@ -22,3 +22,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   var pe = document.getElementById("filter_period");
   var strPeriod = pe.value;
+  var r = document.getElementById("filter_risk");
+  var strRisk = r.value;

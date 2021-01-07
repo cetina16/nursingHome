@@ -12,15 +12,26 @@ def home():
     today = date.today()
     date_time = today.strftime("%m/%d/%Y")
     name = None
+    residents = None
+    nurses = None
+    diseases = None
     global homeid
     if homeid != 0:
         db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
         cursor = db.cursor()
         cursor.execute("SELECT * FROM Doctor WHERE nursinghomeid=%s",(homeid,))
         data = cursor.fetchone()
-        cursor.close()
         name = data[2]  #doctor name
-    return render_template("home.html",islogged=LOGGED ,date=date_time,name=name)
+        cursor.execute("""SELECT Resident.name FROM Resident INNER JOIN Nurse ON Resident.nurseid=Nurse.nurseid 
+                    WHERE Nurse.nursinghomeid={0}
+                """.format(homeid) )
+        residents = cursor.fetchall()
+        cursor.execute("SELECT name FROM Nurse WHERE nursinghomeid={0}".format(homeid))
+        nurses = cursor.fetchall()
+        cursor.execute("SELECT name FROM Disease WHERE homeid={0}".format(homeid))
+        diseases = cursor.fetchall()
+        cursor.close()
+    return render_template("home.html",islogged=LOGGED ,date=date_time,name=name, residents=residents,nurses=nurses,diseases=diseases)
 
 def resident_disease_page(residentid):
     global LOGGED
@@ -44,9 +55,7 @@ def resident_disease_page(residentid):
         query = "INSERT INTO Diseaseowners(residentid,diseaseid,startdate,enddate) VALUES (%s,%s,%s,%s)"
         data = (residentid,diseaseid,startdate,enddate)
         cursor.execute(query, data)
-  
 
-       
         db.commit()
         cursor.close()
         return redirect(url_for("resident_page", residentid=residentid,islogged=LOGGED))
@@ -531,7 +540,8 @@ def login_page():
                                 PRIMARY KEY(residentid , diseaseid))""")
                 db.commit()
                 cursor.close()
-                return render_template("home.html",islogged=islogged,name=name,date=date_time)
+                #return render_template("home.html",islogged=islogged,name=name,date=date_time)
+                return redirect(url_for("home",islogged=islogged,name=name,date=date_time))
             else:
                 islogged = LOGGED
                 flash("Wrong Password!")
@@ -548,9 +558,11 @@ def filter_page():
     if request.method == "GET":
         cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
         diseases = cursor.fetchall()
+        cursor.execute("SELECT diseaseid,risklevel FROM Disease WHERE homeid={0}".format(homeid))
+        risks = cursor.fetchall()
         cursor.close()
         residents = None
-        return render_template("filter.html", diseases=diseases, islogged=LOGGED,residents=residents)
+        return render_template("filter.html", diseases=diseases, islogged=LOGGED,residents=residents,risks=risks)
     else:
         form_diseaseid = request.form["diseaseid"] 
         query = """SELECT Resident.residentid, Resident.name

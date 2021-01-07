@@ -4,7 +4,7 @@
 {% if islogged %}
     <h1 class="title">Filter by Disease</h1>
     <div class="box">
-        <form action="" method="post" name="nurse_edit">
+        <form action="" method="post" name="filter">
             <script type=text/javascript src="{{url_for('static', filename='main.js') }}"></script>
             <div class="field">
                 <label for="disease_filter_id" class="label"> Select Disease  </label>
@@ -42,6 +42,5 @@
               </table>
     </div>
     {% endif %}
-
-{% endif %}
+    {% endif %}
 {% endblock %}
