@@ -123,37 +123,6 @@
             </script>
             </div>
 
-
-         
-                  
-          <div class="box">
-            <h1 class="title">Periodic Activities: </h1>
-            {% if diseases %}
-            <form action="" method="post" name="">
-            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-              {% for disease in diseases %}
-              <tr>
-                <td>
-                  <label class="checkbox"> 
-                    
-                  </label>
-                </td>
-                <td>{{disease[1]}} </th>
-                <td>{{disease[2]}} </td>
-                <td>{{disease[3]}} </td>  
-              </tr>
-              {% endfor %}    
-            </table>
-
-            <div class="field is-grouped">
-              <div class="control">
-                <button class="button is-danger is-small">Delete</button>
-              </div>
-            </div>
-            </form>
-            {% endif %}
-          </div>
-
             
           </div>
 
