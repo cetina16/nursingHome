@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+{% if islogged %}
+<section class="hero">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+        <h1 class="title">Profile</h1>
+          <div class=columns>
+            <div class="column">
+              <div class="box">
+                <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                  <tr>
+                    <th>Doctor name:</th>
+                    <td>{{values[0] }}</td>
+                  </tr>
+                  <tr>
+                    <th>Email:</th>
+                    <td>{{values[1] }}</td>
+                  </tr>
+
+                  <tr>
+                    <th>Home name:</th>
+                    <td>{{values[2] }}</td>
+                  </tr>
+                  <tr>
+                    <th>City:</th>
+                    <td>{{ values[3] }}</td>
+                  </tr>
+                  <tr>
+                    <th>Address:</th>
+                    <td>{{ values[4] }}</td>
+                  </tr>
+                  <tr>
+                    <th>Type:</th>
+                    <td>{{ values[5] }}</td>
+                  </tr>
+                  <tr>
+                    <th> Tel:</th>
+                    <td>{{ values[6] }}</td>
+                  </tr>
+                </table>
+
+                <div class="field is-grouped">
+                  <div class="control">
+                    <a class="button is-medium"
+                      href="{{ request.path }}/edit">Edit</a>
+                  </div>
+                </div>
+                </div>
+            </div>
+
+            
+          </div>
+  </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

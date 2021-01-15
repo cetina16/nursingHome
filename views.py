@@ -657,12 +657,16 @@ def review_page():
 def profile_page():
     global LOGGED
     global homeid
-    #db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
-    #cursor = db.cursor()
-   
+    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    cursor = db.cursor()
     if request.method == "GET":
-        
-        return render_template("profile.html", islogged=LOGGED)
+        cursor.execute("""SELECT Doctor.name,Doctor.email,Nursinghome.name,Nursinghome.city,Nursinghome.address,
+                            Nursinghome.type, Nursinghome.tel
+                         FROM Doctor INNER JOIN Nursinghome ON Doctor.nursinghomeid=Nursinghome.homeid 
+                         WHERE Doctor.nursinghomeid={0}
+                """.format(homeid) )
+        values= cursor.fetchone()
+        return render_template("profile.html", islogged=LOGGED,values=values)
     else:
-       
+        
         return render_template("profile.html",islogged=LOGGED)
