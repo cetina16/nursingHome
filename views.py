@@ -611,6 +611,10 @@ def filter_page():
     global homeid
     db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
     cursor = db.cursor()
+    cursor.execute("""SELECT COUNT(residentid), Disease.name 
+                    FROM Diseaseowners INNER JOIN Disease ON Disease.diseaseid=Diseaseowners.diseaseid
+                    GROUP BY Diseaseowners.diseaseid""")
+    result = dict(cursor.fetchall())
     if request.method == "GET":
         cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
         diseases = cursor.fetchall()
@@ -619,7 +623,7 @@ def filter_page():
         cursor.close()
         residents = None
         default = "0"
-        return render_template("filter.html", diseases=diseases, islogged=LOGGED,residents=residents,risks=risks,default=default)
+        return render_template("filter.html", diseases=diseases, islogged=LOGGED,residents=residents,risks=risks,default=default,result=result)
     else:
         form_diseaseid = request.form["diseaseid"] 
         diseaseid = str(form_diseaseid)
@@ -631,14 +635,15 @@ def filter_page():
                             FROM Resident INNER JOIN Diseaseowners ON Resident.residentid=Diseaseowners.residentid 
                             WHERE diseaseid={0}
                         """.format(form_diseaseid)
-            cursor.execute(query)
+            cursor.execute(query) 
             residents = cursor.fetchall()
             cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
             diseases = cursor.fetchall()
             cursor.execute("SELECT name FROM Disease WHERE diseaseid={0}".format(form_diseaseid))
             diseasename = cursor.fetchone()
+
             cursor.close()
-            return render_template("filter.html",islogged=LOGGED,residents=residents,diseases=diseases,diseasename =diseasename)
+            return render_template("filter.html",islogged=LOGGED,result=result,residents=residents,diseases=diseases,diseasename =diseasename)
 
 def review_page():
     global LOGGED
@@ -678,5 +683,39 @@ def profile_page():
         values= cursor.fetchone()
         return render_template("profile.html", islogged=LOGGED,values=values)
     else:
-        
-        return render_template("profile.html",islogged=LOGGED)
+        return redirect(url_for("profile_edit_page"))
+
+def profile_edit_page():
+    global LOGGED
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    cursor = db.cursor()
+    if request.method == "GET":
+        values = {"dr_name": "", "h_name": "", "email":"","tel":"","address":"","city":"","type":""}
+        return render_template("profile_edit.html", values = values,islogged=LOGGED)
+    else:
+        global homeid
+        form_dr_name = request.form["dr_name"]
+        form_h_name = request.form["h_name"]
+        form_email = request.form["email"]
+        form_type = request.form["type"]
+        form_tel = request.form["tel"]
+        form_address = request.form["address"]
+        form_city = request.form["city"]
+     
+
+        dr_name = str(form_dr_name)
+        h_name = str(form_h_name)
+        email = str(form_email)
+        type_ = str (form_type)
+        tel = str(form_tel)
+        address = str(form_address)
+        city = str(form_city)
+
+        query = "UPDATE Doctor SET name='{0}', email='{1}' WHERE nursinghomeid={2}".format(dr_name, email,homeid)
+        cursor.execute(query)
+        query = "UPDATE Nursinghome SET name='{0}', city='{1}', type='{2}', tel='{3}', address='{4}' WHERE homeid={5}".format(h_name, city, type_ ,tel, address, homeid)
+        cursor.execute(query)
+
+        db.commit()
+        cursor.close()
+        return redirect(url_for("profile_page", islogged=LOGGED))

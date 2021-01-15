@@ -14,7 +14,7 @@ def create_app():
     app.add_url_rule("/filter", view_func=views.filter_page, methods=["GET", "POST"])
     app.add_url_rule("/review", view_func=views.review_page, methods=["GET", "POST"])
     app.add_url_rule("/profile", view_func=views.profile_page, methods=["GET", "POST"])
-
+    app.add_url_rule("/profile/edit", view_func=views.profile_edit_page, methods=["GET", "POST"])
     app.add_url_rule("/nurse_edit", view_func=views.nurse_add_page, methods=["GET", "POST"]  )
     app.add_url_rule("/nurses", view_func=views.nurses_page, methods=["GET", "POST"])
     app.add_url_rule("/nurse/<int:nurseid>", view_func=views.nurse_page, methods=["GET", "POST"])

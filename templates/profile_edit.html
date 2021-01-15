@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+{% block title %}Edit Profile {% endblock %}
+{% block content %}
+  {% if islogged %}
+  <h1 class="title">
+    <span class="icon is-small">
+      <i class="fas fa-edit" aria-hidden="true"></i>
+    </span>
+    Edit Profile
+  </h1>
+  <div class="box">
+    <form action="" method="post" name="nurse_edit">
+      <div class="field">
+        <label for="name" class="label"> Doctor Name   </label>
+        <div class="control">
+          <input type="text" name="dr_name" class="input" required="required" value="{{ values['dr_name'] }}"/>
+        </div>
+      </div>
+    
+
+                     
+      <div class="field">
+        <label for="email" class="label">Email</label>
+        <div class="control">
+        <p class="control has-icons-left">
+        <input class="input is-info" type="email" name="email" required="required" value="{{ values['email'] }}" placeholder="dr_example@gmail.com"/>
+        <span class="icon is-small is-left">
+            <i class="fas fa-envelope"></i>
+        </span>
+        </p>
+        </div>
+    </div>
+
+    
+      <div class="field">
+        <label for="name" class="label"> Home Name   </label>
+        <div class="control">
+          <input type="text" name="h_name" class="input" required="required" value="{{ values['h_name'] }}"/>
+        </div>
+      </div>
+      <div class="field">
+        <label for="name" class="label"> City  </label>
+        <div class="control">
+          <input type="text" name="city" class="input" required="required" value="{{ values['city'] }}"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="address" class="label">   Address   </label>
+        <div class="control">
+          <input type="text" name="address" class="input" required="required" value="{{ values['address'] }}"/>
+        </div>
+      </div>
+
+
+      <div class="field">
+        <label for="type" class="label">Type</label>
+        <div class="control">
+          <label class="radio">
+            <input type="radio" type="text"  name="type" required="required" value="private">
+            Private
+          </label>
+          <label class="radio">
+            <input type="radio" type="text"  name="type" checked required="required" value="state">
+            State
+          </label>
+          <label class="radio">
+            <input type="radio" type="text"  name="type" required="required" value="other">
+            Other
+          </label>
+         
+        </div>
+    </div>
+     
+     <div class="field">
+        <label for="tel" class="label">Telephone number</label>
+        <div class="control">
+        <input class="input" name="tel" type="tel" required="required" maxlength = "11" minlength = "11" value="{{ values['tel'] }}" placeholder="e.g. 0 (212) 222 55 88"/>
+        </div>
+     </div>
+     
+
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-light is-medium">  Save  </button>
+        </div>
+      </div>
+   </form>
+  </div>
+  {% endif %}
+  {% endblock %}
