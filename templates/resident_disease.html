@@ -42,9 +42,16 @@
               <input type="date" name="enddate" class="input"  required="required" value="{{ values['enddate'] }}"/>
             </div>
           </div>
-      
+          
+          <div class="field">
+            <label for="note" class="label">   Note   </label> 
+            <div class="control">
+              <textarea class="textarea"  value="{{ values['note'] }}" id="note" name="note" >
+                The patient's condition is stable
+              </textarea>
+            </div>
+          </div>
         
-
           <div class="field is-grouped">
             <div class="control">
               <button class="button is-light is-medium">  Add  </button>

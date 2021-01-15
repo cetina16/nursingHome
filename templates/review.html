@@ -12,6 +12,9 @@
             <div class="control">
                 <div class = "select"> 
                 <select id="filter_period" name="period">
+                    <option value="{{default}}" >  
+                        Select a Period 
+                      </option> 
                     {% for period in periods %}
                     <option value="{{period[0]}}"> 
                     {{period[0]}}

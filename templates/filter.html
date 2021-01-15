@@ -11,6 +11,9 @@
                 <div class="control">
                     <div class = "select">
                     <select id="filter_disease" name="diseaseid">
+                        <option value="{{default}}" >  
+                            Select a Disease 
+                          </option> 
                         {% for disease in diseases %}
                         <option value="{{disease[0]}}"> 
                         {{disease[1]}}

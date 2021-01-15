@@ -17,7 +17,7 @@ def home():
     diseases = None
     global homeid
     if homeid != 0:
-        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
         cursor = db.cursor()
         cursor.execute("SELECT * FROM Doctor WHERE nursinghomeid=%s",(homeid,))
         data = cursor.fetchone()
@@ -36,10 +36,10 @@ def home():
 def resident_disease_page(residentid):
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
     cursor = db.cursor()
     if request.method == "GET":
-        values = {"startdate": "", "enddate":"","diseaseid":""}
+        values = {"startdate": "", "enddate":"","diseaseid":"","note":""}
         cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
         diseases = cursor.fetchall()
         cursor.close()
@@ -49,6 +49,8 @@ def resident_disease_page(residentid):
         form_disease = request.form["diseaseid"]
         form_startdate = request.form["startdate"]
         form_enddate = request.form["enddate"]
+        form_note = request.form["note"]
+        note = str(form_note)
         diseaseid = str(form_disease)
         startdate = str(form_startdate)
         enddate = str(form_enddate)
@@ -59,11 +61,11 @@ def resident_disease_page(residentid):
             return redirect(url_for("resident_page", residentid=residentid,islogged=LOGGED))
         else:
             if control is None:
-                query = "INSERT INTO Diseaseowners(residentid,diseaseid,startdate,enddate) VALUES (%s,%s,%s,%s)"
-                data = (residentid,diseaseid,startdate,enddate)
+                query = "INSERT INTO Diseaseowners(residentid,diseaseid,startdate,enddate,note) VALUES (%s,%s,%s,%s,%s)"
+                data = (residentid,diseaseid,startdate,enddate,note)
                 cursor.execute(query, data)
             else:
-                cursor.execute("UPDATE Diseaseowners SET startdate='{0}', enddate='{1}' WHERE residentid={2} AND diseaseid={3}".format(startdate,enddate,residentid,diseaseid))
+                cursor.execute("UPDATE Diseaseowners SET startdate='{0}', enddate='{1}',note='{2}' WHERE residentid={3} AND diseaseid={3}".format(startdate,enddate,note,residentid,diseaseid))
         db.commit()
         cursor.close()
         return redirect(url_for("resident_page", residentid=residentid,islogged=LOGGED))
@@ -71,10 +73,11 @@ def resident_disease_page(residentid):
 def disease_add_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
     cursor = db.cursor()
     if request.method == "GET":
         values = {"name": "", "risklevel": "", "period": "", "periodnumber":""}
+        cursor.close()
         return render_template(
             "disease_edit.html", values = values,islogged=LOGGED
         )
@@ -90,9 +93,6 @@ def disease_add_page():
         period_number= str(form_period_number)
         period = period_number +" "+ period_type
 
-        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
-        cursor = db.cursor()
-
         insert_stmt = "INSERT INTO Disease(name,risklevel,period,homeid) VALUES (%s,%s,%s,%s)"
         data = (name,risklevel,period,homeid)
         cursor.execute(insert_stmt, data)
@@ -104,7 +104,7 @@ def diseases_page():
     global LOGGED
     global homeid
     if request.method == "GET":
-        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
         cursor = db.cursor()
         query = """SELECT diseaseid,name,period,risklevel FROM Disease 
                     WHERE homeid={0}
@@ -114,7 +114,7 @@ def diseases_page():
         return render_template("diseases.html",values=values,islogged=LOGGED)
     else:
         form_disease_ids = request.form.getlist("disease_ids")
-        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
         cursor = db.cursor()
         for disease_id in form_disease_ids:
             cursor.execute("SELECT * FROM Disease WHERE diseaseid=%s",(disease_id,) )
@@ -132,7 +132,7 @@ def diseases_page():
    
 def disease_page(diseaseid):
     global LOGGED
-    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
     cursor = db.cursor()
     cursor.execute("SELECT * FROM Disease WHERE diseaseid=%s",(diseaseid,) )
     values = cursor.fetchone()
@@ -143,7 +143,7 @@ def disease_page(diseaseid):
 
 def disease_edit_page(diseaseid):
     global LOGGED
-    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
     cursor = db.cursor()
     cursor.execute("SELECT name,risklevel FROM Disease WHERE diseaseid=%s",(diseaseid,) )
     values_place = cursor.fetchone()
@@ -185,7 +185,7 @@ def logout_page():
 def resident_add_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
     cursor = db.cursor()
     if request.method == "GET":
         values = {"name": "", "age": "", "gender": "","tel":"","bedridden":""}
@@ -227,9 +227,9 @@ def resident_add_page():
 def residents_page():
     global LOGGED
     global homeid
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    cursor = db.cursor()
     if request.method == "GET":
-        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
-        cursor = db.cursor()
         #JOIN 
         query = """SELECT Resident.residentid, Resident.name,Resident.age,Resident.gender,Resident.bedridden, Resident.tel, Nurse.nursinghomeid 
                     FROM Resident INNER JOIN Nurse ON Resident.nurseid=Nurse.nurseid 
@@ -237,11 +237,10 @@ def residents_page():
                 """.format(homeid)
         cursor.execute(query)
         values = cursor.fetchall()
+        cursor.close()
         return render_template("residents.html",values=values,islogged=LOGGED)
     else:
         form_resident_ids = request.form.getlist("resident_ids")
-        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
-        cursor = db.cursor()
         for resident_id in form_resident_ids:
             cursor.execute("SELECT * FROM Resident WHERE residentid=%s",(resident_id,) )
             data = cursor.fetchone() 
@@ -253,7 +252,7 @@ def residents_page():
 
 def resident_page(residentid): 
     global LOGGED
-    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
     if request.method == "GET":
         cursor = db.cursor()
         cursor.execute("SELECT * FROM Resident WHERE residentid=%s",(residentid,) )
@@ -283,8 +282,9 @@ def resident_page(residentid):
 def resident_edit_page(residentid):
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
     cursor = db.cursor()
+
     if request.method == "GET":
         values = {"name": "", "age": "", "gender":"","tel":"","bedridden":""}
         cursor.execute("SELECT nurseid, name FROM Nurse WHERE capacity >0 AND capacity_exist<capacity AND nursinghomeid=%s",(homeid,))
@@ -333,14 +333,15 @@ def nurses_page():
     if request.method == "GET":
         global homeid
         global LOGGED
-        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
         cursor = db.cursor()
         cursor.execute("SELECT nurseid, name,capacity,type,address,tel FROM Nurse WHERE nursinghomeid=%s",(homeid,))
         values = cursor.fetchall()
+        cursor.close()
         return render_template("nurses.html",values=values,islogged=LOGGED)
     else:
         form_nurse_ids = request.form.getlist("nurse_ids")
-        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
         cursor = db.cursor()
         for nurse_id in form_nurse_ids:
             cursor.execute("SELECT * FROM Nurse WHERE nurseid=%s",(nurse_id,) )
@@ -375,7 +376,7 @@ def nurse_add_page():
         address = str(form_address)
         exist = 0
         capacity_exist = str(exist)
-        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
         cursor = db.cursor()
 
         insert_stmt = "INSERT INTO Nurse(name,capacity,capacity_exist,type,address,tel,nursinghomeid) VALUES (%s,%s,%s,%s,%s,%s,%s)"
@@ -387,7 +388,7 @@ def nurse_add_page():
         
 def nurse_page(nurseid): 
     global LOGGED
-    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
     cursor = db.cursor()
     cursor.execute("SELECT * FROM Nurse WHERE nurseid=%s",(nurseid,) )
     values = cursor.fetchone()
@@ -398,7 +399,7 @@ def nurse_page(nurseid):
 
 def nurse_edit_page(nurseid):
     global LOGGED
-    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
     cursor = db.cursor()
     if request.method == "GET":
         cursor.execute("SELECT capacity_exist FROM Nurse WHERE nurseid=%s",(nurseid,) )
@@ -430,11 +431,11 @@ def signup_page():
         }
         return render_template("signup.html", values = values,)
     else:
-        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
         cursor = db.cursor()
         cursor.execute("DROP TABLE IF EXISTS Diseaseowners")
-        cursor.execute("DROP TABLE IF EXISTS Resident")
-        cursor.execute("DROP TABLE IF EXISTS Nurse")
+        #cursor.execute("DROP TABLE IF EXISTS Resident")
+        #cursor.execute("DROP TABLE IF EXISTS Nurse")
         #cursor.execute("DROP TABLE IF EXISTS Disease")
         #cursor.execute("DROP TABLE IF EXISTS Doctor")
         #cursor.execute("DROP TABLE IF EXISTS Nursinghome")
@@ -508,6 +509,7 @@ def signup_page():
                                 ON UPDATE CASCADE,
                                 startdate DATE NOT NULL,
                                 enddate DATE,
+                                note VARCHAR(100) NOT NULL,
                                 PRIMARY KEY(residentid , diseaseid))""")
      
         form_name = request.form["name"] 
@@ -542,10 +544,6 @@ def signup_page():
         tel = str(form_tel)
 
         hashed_password = hasher.hash(password)
-    
-    
-        
-
         
         line1 = "INSERT INTO Nursinghome(name,city,type,address,tel) VALUES (%s,%s,%s,%s,%s)"
         data1 = (homename,city,type_,address,tel)
@@ -572,7 +570,7 @@ def login_page():
         form_email = request.form["email"]
         form_password = request.form["password"]
 
-        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
         cursor = db.cursor()
         cursor.execute("SELECT * FROM Doctor WHERE email=%s",(form_email,) )
 
@@ -611,7 +609,7 @@ def login_page():
 def filter_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
     cursor = db.cursor()
     if request.method == "GET":
         cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
@@ -620,44 +618,56 @@ def filter_page():
         risks = cursor.fetchall()
         cursor.close()
         residents = None
-        return render_template("filter.html", diseases=diseases, islogged=LOGGED,residents=residents,risks=risks)
+        default = "0"
+        return render_template("filter.html", diseases=diseases, islogged=LOGGED,residents=residents,risks=risks,default=default)
     else:
         form_diseaseid = request.form["diseaseid"] 
-        query = """SELECT Resident.residentid, Resident.name
-                        FROM Resident INNER JOIN Diseaseowners ON Resident.residentid=Diseaseowners.residentid 
-                        WHERE diseaseid={0}
-                    """.format(form_diseaseid)
-        cursor.execute(query)
-        residents = cursor.fetchall()
-        cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
-        diseases = cursor.fetchall()
-        cursor.execute("SELECT name FROM Disease WHERE diseaseid={0}".format(form_diseaseid))
-        diseasename = cursor.fetchone()
-        cursor.close()
-        return render_template("filter.html",islogged=LOGGED,residents=residents,diseases=diseases,diseasename =diseasename)
+        diseaseid = str(form_diseaseid)
+        if diseaseid == "0":
+            flash("Select a disease! If there is no disease in the system yet, please add a disease first!") 
+            return redirect(url_for("filter_page"))
+        else:
+            query = """SELECT Resident.residentid, Resident.name
+                            FROM Resident INNER JOIN Diseaseowners ON Resident.residentid=Diseaseowners.residentid 
+                            WHERE diseaseid={0}
+                        """.format(form_diseaseid)
+            cursor.execute(query)
+            residents = cursor.fetchall()
+            cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
+            diseases = cursor.fetchall()
+            cursor.execute("SELECT name FROM Disease WHERE diseaseid={0}".format(form_diseaseid))
+            diseasename = cursor.fetchone()
+            cursor.close()
+            return render_template("filter.html",islogged=LOGGED,residents=residents,diseases=diseases,diseasename =diseasename)
 
 def review_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
     cursor = db.cursor()
     cursor.execute("SELECT period FROM Disease WHERE homeid={0}".format(homeid))
     periods = cursor.fetchall()
+    default = "0"
     if request.method == "GET":
         cursor.close()
-        return render_template("review.html", periods=periods, islogged=LOGGED)
+        return render_template("review.html", periods=periods, islogged=LOGGED,default=default)
     else:
         form_period = request.form["period"] 
-        query = "SELECT name FROM Disease WHERE period='{0}' and homeid={1}".format(form_period,homeid)
-        cursor.execute(query)
-        diseasenames = cursor.fetchall()
-        cursor.close()
-        return render_template("review.html",islogged=LOGGED, periods=periods,diseasenames =diseasenames,period=form_period)
+        period = str (form_period)
+        if period == "0":
+            flash("Select a period! If there is no periodic activity in the system yet, please add a periodic activity first!") 
+            return redirect(url_for("review_page"))
+        else:
+            query = "SELECT name FROM Disease WHERE period='{0}' and homeid={1}".format(form_period,homeid)
+            cursor.execute(query)
+            diseasenames = cursor.fetchall()
+            cursor.close()
+            return render_template("review.html",islogged=LOGGED, periods=periods,diseasenames =diseasenames,period=form_period)
 
 def profile_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
     cursor = db.cursor()
     if request.method == "GET":
         cursor.execute("""SELECT Doctor.name,Doctor.email,Nursinghome.name,Nursinghome.city,Nursinghome.address,
