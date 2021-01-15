@@ -31,6 +31,9 @@
             <a class="navbar-item" href="{{ url_for('home') }}"> <i class="fas fa-heartbeat" aria-hidden="true"></i> Home</a> 
 
             {% if islogged %}
+            <a class="navbar-item" href="{{ url_for('profile_page') }}">
+              <i class="fas fa-user" aria-hidden="true"></i>  Profile
+            </a>
             <a class="navbar-item" href="{{ url_for('filter_page') }}">
               <i class="fas fa-filter" aria-hidden="true"></i>  Filter
             </a>

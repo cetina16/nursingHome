@@ -42,9 +42,12 @@
         <label for="nurseid" class="label"> Select Nurse  </label>
         <div class="control">
           <div class = "select">
-            <select id="nurseID" name="nurseid">
+            <select id="nurseID" name="nurseid" >
+              <option value="{{default}}" >  
+                Select a Nurse 
+              </option> 
               {% for nurse in nurses %}
-              <option value="{{nurse[0]}}"> 
+              <option value="{{nurse[0]}}" > 
                 {{nurse[1]}}
               </option>
               {% endfor %}

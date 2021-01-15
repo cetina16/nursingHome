@@ -8,44 +8,61 @@
     </span>
     Add Disease
   </h1>
-  <div class="box">
-    <form action="" method="post" name="disease_resident">
-      <div class="field">
-        <script type=text/javascript src="{{url_for('static', filename='main.js') }}"></script>
-        <label for="name" class="label">   Select Disease   </label> 
-        <div class="control">
-          <div class = "select">
-            <select id="diseaseid" name="diseaseid">
-                {% for disease in diseases %}
-                <option value="{{disease[0]}}"> 
-                  {{disease[1]}}
-                </option>
-                {% endfor %}
-              </select>
+  <div class= "columns">
+    <div class="column">
+      <div class="box">
+        <form action="" method="post" name="disease_resident">
+          <div class="field">
+            <script type=text/javascript src="{{url_for('static', filename='main.js') }}"></script>
+            <label for="name" class="label">   Select Disease   </label> 
+            <div class="control">
+              <div class = "select">
+                <select id="diseaseid" name="diseaseid">
+                  <option value="{{default}}" >  
+                    Select a Disease 
+                  </option> 
+                    {% for disease in diseases %}
+                    <option value="{{disease[0]}}"> 
+                      {{disease[1]}}
+                    </option>
+                    {% endfor %}
+                  </select>
+              </div>
+            </div>
+          </div> 
+          <div class="field">
+            <label for="startdate" class="label">   Start Date   </label> 
+            <div class="control">
+              <input type="date" name="startdate" class="input" required="required" value="{{ values['startdate'] }}"/>
+            </div>
           </div>
-        </div>
-      </div> 
-      <div class="field">
-        <label for="startdate" class="label">   Start Date   </label> 
-        <div class="control">
-          <input type="date" name="startdate" class="input" required="required" value="{{ values['startdate'] }}"/>
-        </div>
-      </div>
-      <div class="field">
-        <label for="enddate" class="label">   End Date   </label> 
-        <div class="control">
-          <input type="date" name="enddate" class="input" required="required"  value="{{ values['enddate'] }}"/>
-        </div>
-      </div>
-   
-     
+          <div class="field">
+            <label for="enddate" class="label">   End Date   </label> 
+            <div class="control">
+              <input type="date" name="enddate" class="input"  required="required" value="{{ values['enddate'] }}"/>
+            </div>
+          </div>
+      
+        
 
-      <div class="field is-grouped">
-        <div class="control">
-          <button class="button is-light is-medium">  Add  </button>
-        </div>
+          <div class="field is-grouped">
+            <div class="control">
+              <button class="button is-light is-medium">  Add  </button>
+            </div>
+          </div>
+      </form>
       </div>
-   </form>
-  </div>
+    </div>
+    <div class="column">
+      <div class="box">
+        <h3> Notes </h3>
+        <p>In this section, you can add an disease or periodic activity to the resident.</p>
+        <p>If a disease has been added before, you will update the date by adding it again.</p>
+        <p>The period time you have specified before will be added automatically.</p>
+        <p>If there is no end date, please write 00.00.0000</p>
+      </div>
+
+    </div>
+ </div>
   {% endif %}
   {% endblock %}

@@ -40,10 +40,11 @@ def resident_disease_page(residentid):
     cursor = db.cursor()
     if request.method == "GET":
         values = {"startdate": "", "enddate":"","diseaseid":""}
-        cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid=%s",(homeid,))
+        cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
         diseases = cursor.fetchall()
         cursor.close()
-        return render_template("resident_disease.html", values = values,islogged=LOGGED,diseases=diseases)
+        default = "0"
+        return render_template("resident_disease.html", values = values,islogged=LOGGED,diseases=diseases,default=default)
     else:
         form_disease = request.form["diseaseid"]
         form_startdate = request.form["startdate"]
@@ -51,11 +52,18 @@ def resident_disease_page(residentid):
         diseaseid = str(form_disease)
         startdate = str(form_startdate)
         enddate = str(form_enddate)
-   
-        query = "INSERT INTO Diseaseowners(residentid,diseaseid,startdate,enddate) VALUES (%s,%s,%s,%s)"
-        data = (residentid,diseaseid,startdate,enddate)
-        cursor.execute(query, data)
-
+        cursor.execute("SELECT * FROM Diseaseowners WHERE residentid={0} AND diseaseid={1}".format(residentid,diseaseid))
+        control = cursor.fetchone()
+        if diseaseid == "0":
+            flash("You should first add a disease or periodic activity to the system.") 
+            return redirect(url_for("resident_page", residentid=residentid,islogged=LOGGED))
+        else:
+            if control is None:
+                query = "INSERT INTO Diseaseowners(residentid,diseaseid,startdate,enddate) VALUES (%s,%s,%s,%s)"
+                data = (residentid,diseaseid,startdate,enddate)
+                cursor.execute(query, data)
+            else:
+                cursor.execute("UPDATE Diseaseowners SET startdate='{0}', enddate='{1}' WHERE residentid={2} AND diseaseid={3}".format(startdate,enddate,residentid,diseaseid))
         db.commit()
         cursor.close()
         return redirect(url_for("resident_page", residentid=residentid,islogged=LOGGED))
@@ -112,12 +120,16 @@ def diseases_page():
             cursor.execute("SELECT * FROM Disease WHERE diseaseid=%s",(disease_id,) )
             data = cursor.fetchone()
             if data is not None:
-                cursor.execute("DELETE FROM Disease WHERE diseaseid=%s",(disease_id,) )
+                cursor.execute("SELECT * FROM Diseaseowners WHERE diseaseid=%s",(disease_id,) )
+                data_ = cursor.fetchone()
+                if data_ != None:
+                    flash("There is a resident with this disease or activity!")
+                else:
+                    cursor.execute("DELETE FROM Disease WHERE diseaseid=%s",(disease_id,) )
                 db.commit()
         cursor.close()
         return redirect(url_for("diseases_page"))
    
-
 def disease_page(diseaseid):
     global LOGGED
     db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
@@ -158,7 +170,6 @@ def disease_edit_page(diseaseid):
         cursor.close()
         return redirect(url_for("disease_page", diseaseid=diseaseid,islogged=LOGGED))
 
-
 def logout_page():
     today = date.today()
     date_time = today.strftime("%m/%d/%Y")
@@ -178,11 +189,12 @@ def resident_add_page():
     cursor = db.cursor()
     if request.method == "GET":
         values = {"name": "", "age": "", "gender": "","tel":"","bedridden":""}
-        cursor.execute("SELECT nurseid, name FROM Nurse WHERE capacity >0 AND nursinghomeid=%s",(homeid,))
+        cursor.execute("SELECT nurseid, name FROM Nurse WHERE capacity >0 AND capacity_exist<capacity AND nursinghomeid=%s",(homeid,))
         nurses = cursor.fetchall()
+        default = "0"
         return render_template(
-            "resident_edit.html", values = values,islogged=LOGGED,nurses=nurses
-        )
+            "resident_edit.html", values = values,islogged=LOGGED,nurses=nurses,default=default
+            )
     else:
         form_name = request.form["name"]
         form_age = request.form["age"]
@@ -196,13 +208,21 @@ def resident_add_page():
         tel = str(form_tel)
         bedridden = str(form_bedridden)
         nurseid= str(form_nurseid)
-
-        insert_stmt = "INSERT INTO Resident(name,age,gender,tel,bedridden,nurseid) VALUES (%s,%s,%s,%s,%s,%s)"
-        data = (name,age,gender,tel,bedridden,nurseid)
-        cursor.execute(insert_stmt, data)
-        db.commit()
-        cursor.close()
-        return redirect(url_for("residents_page"))
+        if nurseid == "0":
+            flash("Select a nurse! If there is no nurse in the system yet, please add a nurse first!") 
+            return redirect(url_for("resident_add_page"))
+        else:
+            query = "INSERT INTO Resident(name,age,gender,tel,bedridden,nurseid) VALUES (%s,%s,%s,%s,%s,%s)"
+            data = (name,age,gender,tel,bedridden,nurseid)
+            cursor.execute(query, data)
+            cursor.execute("SELECT capacity_exist FROM Nurse WHERE nurseid=%s",(nurseid,))
+            capacity_exist_str = cursor.fetchone()
+            capacity_exist = int(capacity_exist_str[0]) + 1
+            query = "UPDATE Nurse SET capacity_exist={0} WHERE nurseid={1}".format(capacity_exist,nurseid)
+            cursor.execute(query)
+            db.commit()
+            cursor.close()
+            return redirect(url_for("residents_page"))
 
 def residents_page():
     global LOGGED
@@ -267,26 +287,48 @@ def resident_edit_page(residentid):
     cursor = db.cursor()
     if request.method == "GET":
         values = {"name": "", "age": "", "gender":"","tel":"","bedridden":""}
-        cursor.execute("SELECT nurseid, name FROM Nurse WHERE capacity >0 AND nursinghomeid=%s",(homeid,))
+        cursor.execute("SELECT nurseid, name FROM Nurse WHERE capacity >0 AND capacity_exist<capacity AND nursinghomeid=%s",(homeid,))
         nurses = cursor.fetchall()
-        return render_template("resident_edit_exist.html", values = values,islogged=LOGGED,nurses=nurses)
+        cursor.execute("SELECT nurseid FROM Resident WHERE residentid={0}".format(residentid))
+        values = cursor.fetchone()
+        default = values[0]
+        cursor.execute("SELECT name,age,tel FROM Resident WHERE residentid=%s",(residentid,) )
+        values_place = cursor.fetchone()
+        return render_template("resident_edit_exist.html", values = values,values_place=values_place,islogged=LOGGED,nurses=nurses,default=default)
     else:
         form_name = request.form["name"]
         form_age = request.form["age"]
         form_gender = request.form["gender"]
         form_tel = request.form["tel"]
         form_bedridden = request.form["bedridden"]
+        form_nurseid = request.form["nurseid"] 
         name = str(form_name)
-        gender = int(form_gender)
+        gender = str(form_gender)
         tel = str(form_tel)
         age = str (form_age)
         bedridden = str(form_bedridden)
+        nurseid = str(form_nurseid)
 
-        query = "UPDATE Resident SET name='{0}', age={1}, gender='{2}', tel='{3}', bedridden='{4}' WHERE residentid={5}".format(name, age, gender ,tel, bedridden, residentid)
+        cursor.execute("SELECT nurseid FROM Resident WHERE residentid= %s",(residentid,) )
+        values = cursor.fetchone()
+        old_nurseid = str(values[0])
+        if old_nurseid != nurseid:
+            cursor.execute("SELECT capacity_exist FROM Nurse WHERE nurseid=%s",(old_nurseid,)) 
+            capacity_exist_str = cursor.fetchone()
+            capacity_exist = int(capacity_exist_str[0]) -1 
+            cursor.execute("UPDATE Nurse SET capacity_exist={0} WHERE nurseid={1}".format(capacity_exist,old_nurseid))
+
+            cursor.execute("SELECT capacity_exist FROM Nurse WHERE nurseid=%s",(nurseid,)) 
+            capacity_exist_str = cursor.fetchone()
+            capacity_exist = int(capacity_exist_str[0]) +1 
+            cursor.execute("UPDATE Nurse SET capacity_exist={0} WHERE nurseid={1}".format(capacity_exist,nurseid))
+        
+        query = "UPDATE Resident SET name='{0}', age={1}, gender='{2}', tel='{3}', bedridden='{4}', nurseid={5} WHERE residentid={6}".format(name, age, gender ,tel, bedridden,nurseid ,residentid)
         cursor.execute(query)
         db.commit()
         cursor.close()
         return redirect(url_for("resident_page", residentid=residentid,islogged=LOGGED))
+
 def nurses_page():
     if request.method == "GET":
         global homeid
@@ -300,12 +342,16 @@ def nurses_page():
         form_nurse_ids = request.form.getlist("nurse_ids")
         db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
         cursor = db.cursor()
-       
         for nurse_id in form_nurse_ids:
             cursor.execute("SELECT * FROM Nurse WHERE nurseid=%s",(nurse_id,) )
             data = cursor.fetchone()
             if data is not None:
-                cursor.execute("DELETE FROM Nurse WHERE nurseid=%s",(nurse_id,) )
+                cursor.execute("SELECT * FROM Resident WHERE nurseid=%s",(nurse_id,) )
+                data_ = cursor.fetchone()
+                if data_ != None:
+                    flash("There are resident(s) assigned to this nurse. Please delete the resident(s) first!")
+                else:
+                    cursor.execute("DELETE FROM Nurse WHERE nurseid=%s",(nurse_id,) )
                 db.commit()
         cursor.close()
         return redirect(url_for("nurses_page"))
@@ -327,12 +373,13 @@ def nurse_add_page():
         type_ = str (form_type)
         tel = str(form_tel)
         address = str(form_address)
-
+        exist = 0
+        capacity_exist = str(exist)
         db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
         cursor = db.cursor()
 
-        insert_stmt = "INSERT INTO Nurse(name,capacity,type,address,tel,nursinghomeid) VALUES (%s,%s,%s,%s,%s,%s)"
-        data = (name,capacity,type_,address,tel,homeid)
+        insert_stmt = "INSERT INTO Nurse(name,capacity,capacity_exist,type,address,tel,nursinghomeid) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        data = (name,capacity,capacity_exist,type_,address,tel,homeid)
         cursor.execute(insert_stmt, data)
         db.commit()
         cursor.close()
@@ -351,13 +398,15 @@ def nurse_page(nurseid):
 
 def nurse_edit_page(nurseid):
     global LOGGED
+    db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    cursor = db.cursor()
     if request.method == "GET":
+        cursor.execute("SELECT capacity_exist FROM Nurse WHERE nurseid=%s",(nurseid,) )
+        capacity_exist = cursor.fetchone()
         values = {"name": "", "capacity": "", "type":"","tel":"","address":""}
-        return render_template("nurse_edit_exist.html", values = values,islogged=LOGGED)
+        return render_template("nurse_edit_exist.html", values = values,islogged=LOGGED,capacity=capacity_exist)
     else:
         global homeid
-        db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
-        cursor = db.cursor()
         form_name = request.form["name"]
         form_capacity = request.form["capacity"]
         form_type = request.form["type"]
@@ -368,13 +417,11 @@ def nurse_edit_page(nurseid):
         type_ = str (form_type)
         tel = str(form_tel)
         address = str(form_address)
-
         query = "UPDATE Nurse SET name='{0}', capacity={1}, type='{2}', tel='{3}', address='{4}' WHERE nurseid={5}".format(name, capacity, type_ ,tel, address, nurseid)
         cursor.execute(query)
         db.commit()
         cursor.close()
         return redirect(url_for("nurse_page", nurseid=nurseid,islogged=LOGGED))
-
     
 def signup_page():
     if request.method == "GET":
@@ -388,9 +435,9 @@ def signup_page():
         cursor.execute("DROP TABLE IF EXISTS Diseaseowners")
         cursor.execute("DROP TABLE IF EXISTS Resident")
         cursor.execute("DROP TABLE IF EXISTS Nurse")
-        cursor.execute("DROP TABLE IF EXISTS Disease")
-        cursor.execute("DROP TABLE IF EXISTS Doctor")
-        cursor.execute("DROP TABLE IF EXISTS Nursinghome")
+        #cursor.execute("DROP TABLE IF EXISTS Disease")
+        #cursor.execute("DROP TABLE IF EXISTS Doctor")
+        #cursor.execute("DROP TABLE IF EXISTS Nursinghome")
         
         cursor.execute("""CREATE TABLE IF NOT EXISTS Nursinghome(homeid INT AUTO_INCREMENT,
                         name VARCHAR(40) NOT NULL,
@@ -446,7 +493,7 @@ def signup_page():
                         nurseid  INT NOT NULL,
                         FOREIGN KEY (nurseid) 
                         REFERENCES Nurse(nurseid)
-                        ON DELETE CASCADE 
+                        ON DELETE RESTRICT 
                         ON UPDATE CASCADE,
                         PRIMARY KEY (residentid))""")
         cursor.execute("""CREATE TABLE IF NOT EXISTS DiseaseOwners(residentid INT NOT NULL,
@@ -560,6 +607,7 @@ def login_page():
             islogged = LOGGED
             flash("Wrong Email!")
             return redirect(url_for("login_page",islogged=islogged))
+
 def filter_page():
     global LOGGED
     global homeid
@@ -605,3 +653,16 @@ def review_page():
         diseasenames = cursor.fetchall()
         cursor.close()
         return render_template("review.html",islogged=LOGGED, periods=periods,diseasenames =diseasenames,period=form_period)
+
+def profile_page():
+    global LOGGED
+    global homeid
+    #db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
+    #cursor = db.cursor()
+   
+    if request.method == "GET":
+        
+        return render_template("profile.html", islogged=LOGGED)
+    else:
+       
+        return render_template("profile.html",islogged=LOGGED)
