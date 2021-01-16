@@ -1,3 +1,3 @@
 DEBUG = True
-PORT = 8080
-SECRET_KEY = "secret"
+#PORT = 8080
+#SECRET_KEY = "secret"
