@@ -103,8 +103,8 @@ def disease_add_page():
 def diseases_page():
     global LOGGED
     global homeid
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     if request.method == "GET":
-        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
         cursor = db.cursor()
         query = """SELECT diseaseid,name,period,risklevel FROM Disease 
                     WHERE homeid={0}
@@ -114,7 +114,6 @@ def diseases_page():
         return render_template("diseases.html",values=values,islogged=LOGGED)
     else:
         form_disease_ids = request.form.getlist("disease_ids")
-        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
         cursor = db.cursor()
         for disease_id in form_disease_ids:
             cursor.execute("SELECT * FROM Disease WHERE diseaseid=%s",(disease_id,) )
@@ -132,7 +131,7 @@ def diseases_page():
    
 def disease_page(diseaseid):
     global LOGGED
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
     cursor.execute("SELECT * FROM Disease WHERE diseaseid=%s",(diseaseid,) )
     values = cursor.fetchone()
@@ -143,7 +142,7 @@ def disease_page(diseaseid):
 
 def disease_edit_page(diseaseid):
     global LOGGED
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
     cursor.execute("SELECT name,risklevel FROM Disease WHERE diseaseid=%s",(diseaseid,) )
     values_place = cursor.fetchone()
@@ -185,7 +184,7 @@ def logout_page():
 def resident_add_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
     if request.method == "GET":
         values = {"name": "", "age": "", "gender": "","tel":"","bedridden":""}
@@ -227,7 +226,7 @@ def resident_add_page():
 def residents_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
     if request.method == "GET":
         #JOIN 
@@ -252,7 +251,7 @@ def residents_page():
 
 def resident_page(residentid): 
     global LOGGED
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     if request.method == "GET":
         cursor = db.cursor()
         cursor.execute("SELECT * FROM Resident WHERE residentid=%s",(residentid,) )
@@ -282,7 +281,7 @@ def resident_page(residentid):
 def resident_edit_page(residentid):
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
 
     if request.method == "GET":
@@ -330,10 +329,10 @@ def resident_edit_page(residentid):
         return redirect(url_for("resident_page", residentid=residentid,islogged=LOGGED))
 
 def nurses_page():
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     if request.method == "GET":
         global homeid
         global LOGGED
-        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
         cursor = db.cursor()
         cursor.execute("SELECT nurseid, name,capacity,type,address,tel FROM Nurse WHERE nursinghomeid=%s",(homeid,))
         values = cursor.fetchall()
@@ -341,7 +340,6 @@ def nurses_page():
         return render_template("nurses.html",values=values,islogged=LOGGED)
     else:
         form_nurse_ids = request.form.getlist("nurse_ids")
-        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
         cursor = db.cursor()
         for nurse_id in form_nurse_ids:
             cursor.execute("SELECT * FROM Nurse WHERE nurseid=%s",(nurse_id,) )
@@ -376,7 +374,7 @@ def nurse_add_page():
         address = str(form_address)
         exist = 0
         capacity_exist = str(exist)
-        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+        db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
         cursor = db.cursor()
 
         insert_stmt = "INSERT INTO Nurse(name,capacity,capacity_exist,type,address,tel,nursinghomeid) VALUES (%s,%s,%s,%s,%s,%s,%s)"
@@ -388,7 +386,7 @@ def nurse_add_page():
         
 def nurse_page(nurseid): 
     global LOGGED
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
     cursor.execute("SELECT * FROM Nurse WHERE nurseid=%s",(nurseid,) )
     values = cursor.fetchone()
@@ -399,7 +397,7 @@ def nurse_page(nurseid):
 
 def nurse_edit_page(nurseid):
     global LOGGED
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
     if request.method == "GET":
         cursor.execute("SELECT capacity_exist FROM Nurse WHERE nurseid=%s",(nurseid,) )
@@ -609,7 +607,7 @@ def login_page():
 def filter_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
     cursor.execute("""SELECT COUNT(residentid), Disease.name 
                     FROM Diseaseowners INNER JOIN Disease ON Disease.diseaseid=Diseaseowners.diseaseid
@@ -649,7 +647,7 @@ def filter_page():
 def review_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
     cursor.execute("SELECT period FROM Disease WHERE homeid={0}".format(homeid))
     periods = cursor.fetchall()
@@ -673,7 +671,7 @@ def review_page():
 def profile_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
     if request.method == "GET":
         cursor.execute("""SELECT Doctor.name,Doctor.email,Nursinghome.name,Nursinghome.city,Nursinghome.address,
@@ -698,7 +696,7 @@ def profile_page():
 
 def profile_edit_page():
     global LOGGED
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
     if request.method == "GET":
         values = {"dr_name": "", "h_name": "", "email":"","tel":"","address":"","city":"","type":""}
