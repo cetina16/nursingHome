@@ -613,7 +613,8 @@ def filter_page():
     cursor = db.cursor()
     cursor.execute("""SELECT COUNT(residentid), Disease.name 
                     FROM Diseaseowners INNER JOIN Disease ON Disease.diseaseid=Diseaseowners.diseaseid
-                    GROUP BY Diseaseowners.diseaseid""")
+                    WHERE Disease.homeid={0}
+                    GROUP BY Diseaseowners.diseaseid """.format(homeid))
     result = dict(cursor.fetchall())
     if request.method == "GET":
         cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
@@ -683,7 +684,17 @@ def profile_page():
         values= cursor.fetchone()
         return render_template("profile.html", islogged=LOGGED,values=values)
     else:
-        return redirect(url_for("profile_edit_page"))
+        LOGGED = False
+        name = None
+        today = date.today()
+        date_time = today.strftime("%m/%d/%Y")
+        cursor.execute("DELETE FROM Doctor WHERE nursinghomeid=%s",(homeid,) )
+        cursor.execute("DELETE FROM Nursinghome WHERE homeid=%s",(homeid,) )
+       
+        db.commit()
+        homeid = 0
+        cursor.close()
+        return render_template("home.html",islogged=LOGGED,name=name,date=date_time)
 
 def profile_edit_page():
     global LOGGED

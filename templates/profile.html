@@ -46,17 +46,38 @@
 
                 <div class="field is-grouped">
                   <div class="control">
-                    <a class="button is-medium"
-                      href="{{ request.path }}/edit">Edit</a>
+                    <a class="button is-medium" href="{{ url_for('profile_edit_page') }}">Edit</a>
                   </div>
                 </div>
+            
+                
+                
+
+              </div>
+
+
+              <form action="" method="post" name="profile">
+              <div class="box">
+                <h3> Be careful! If you want to delete your system permanently, click the delete button. </h3>
+                <div class="field is-grouped">
+                  <div class="control">
+                    <button class="button is-danger is-medium">Delete system </button>
+                  </div>
                 </div>
+              </div>
+            
+            </form>
+            
+            
+            
             </div>
 
             
           </div>
   </div>
+
   </div>
+  
 </section>
 {% endif %}
 {% endblock %}
