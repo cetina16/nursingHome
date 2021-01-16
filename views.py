@@ -17,7 +17,7 @@ def home():
     diseases = None
     global homeid
     if homeid != 0:
-        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+        db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
         cursor = db.cursor()
         cursor.execute("SELECT * FROM Doctor WHERE nursinghomeid=%s",(homeid,))
         data = cursor.fetchone()
@@ -36,7 +36,7 @@ def home():
 def resident_disease_page(residentid):
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
     if request.method == "GET":
         values = {"startdate": "", "enddate":"","diseaseid":"","note":""}
@@ -73,7 +73,7 @@ def resident_disease_page(residentid):
 def disease_add_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
     if request.method == "GET":
         values = {"name": "", "risklevel": "", "period": "", "periodnumber":""}
@@ -431,7 +431,7 @@ def signup_page():
         }
         return render_template("signup.html", values = values,)
     else:
-        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+        db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
         cursor = db.cursor()
         cursor.execute("DROP TABLE IF EXISTS Diseaseowners")
         #cursor.execute("DROP TABLE IF EXISTS Resident")
@@ -570,7 +570,7 @@ def login_page():
         form_email = request.form["email"]
         form_password = request.form["password"]
 
-        db = MySQLdb.connect(host="eu-cdbr-west-03.cleardb.net", user="b89139ca286b82", passwd="3ce5a60a", db="heroku_ac68a38acbc0217")
+        db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
         cursor = db.cursor()
         cursor.execute("SELECT * FROM Doctor WHERE email=%s",(form_email,) )
 
