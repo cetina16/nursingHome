@@ -2,11 +2,8 @@ from flask import Flask,render_template,request,redirect,url_for,flash,current_a
 from datetime import date
 from flask_mysqldb import MySQL
 from passlib.hash import pbkdf2_sha256 as hasher
+from server import homeid, LOGGED
 
-
-homeid = 0
-doctorid = 0
-LOGGED = False
 
 def home():
     mysql = current_app.config["mysql"]

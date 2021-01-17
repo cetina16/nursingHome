@@ -2,8 +2,13 @@ from flask import Flask, render_template,request,url_for,redirect,flash
 import views
 from flask_mysqldb import MySQL
 
+
+
 app = Flask(__name__)
 mysql = MySQL(app)
+
+homeid = 0
+LOGGED = False
 
 app.config["app"]=app
 app.config["mysql"]=mysql
