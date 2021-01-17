@@ -10,6 +10,7 @@ doctorid = 0
 LOGGED = False
 
 def home():
+    mysql = current_app.config["mysql"]
     today = date.today()
     date_time = today.strftime("%m/%d/%Y")
     name = None
@@ -34,6 +35,7 @@ def home():
     return render_template("home.html",islogged=LOGGED ,date=date_time,name=name, residents=residents,nurses=nurses,diseases=diseases)
 
 def resident_disease_page(residentid):
+    mysql = current_app.config["mysql"]
     global LOGGED
     global homeid
     cursor = mysql.connection.cursor()
@@ -70,6 +72,7 @@ def resident_disease_page(residentid):
         return redirect(url_for("resident_page", residentid=residentid,islogged=LOGGED))
 
 def disease_add_page():
+    mysql = current_app.config["mysql"]
     global LOGGED
     global homeid
     cursor = mysql.connection.cursor()
@@ -99,6 +102,7 @@ def disease_add_page():
         return redirect(url_for("diseases_page"))
 
 def diseases_page():
+    mysql = current_app.config["mysql"]
     global LOGGED
     global homeid
     cursor = mysql.connection.cursor()
@@ -126,6 +130,7 @@ def diseases_page():
         return redirect(url_for("diseases_page"))
    
 def disease_page(diseaseid):
+    mysql = current_app.config["mysql"]
     global LOGGED
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT * FROM Disease WHERE diseaseid=%s",(diseaseid,) )
@@ -136,6 +141,7 @@ def disease_page(diseaseid):
     return render_template("disease.html",diseaseid=diseaseid, values=values,islogged=LOGGED,diseases=diseases)
 
 def disease_edit_page(diseaseid):
+    mysql = current_app.config["mysql"]
     global LOGGED
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT name,risklevel FROM Disease WHERE diseaseid=%s",(diseaseid,) )
@@ -164,6 +170,7 @@ def disease_edit_page(diseaseid):
         return redirect(url_for("disease_page", diseaseid=diseaseid,islogged=LOGGED))
 
 def logout_page():
+    mysql = current_app.config["mysql"]
     today = date.today()
     date_time = today.strftime("%m/%d/%Y")
     global homeid
@@ -176,6 +183,7 @@ def logout_page():
     return render_template("home.html",islogged=LOGGED,name=name,date=date_time)
 
 def resident_add_page():
+    mysql = current_app.config["mysql"]
     global LOGGED
     global homeid
     cursor = mysql.connection.cursor()
@@ -217,6 +225,7 @@ def resident_add_page():
             return redirect(url_for("residents_page"))
 
 def residents_page():
+    mysql = current_app.config["mysql"]
     global LOGGED
     global homeid
     cursor = mysql.connection.cursor()
@@ -241,6 +250,7 @@ def residents_page():
         return redirect(url_for("residents_page"))
 
 def resident_page(residentid): 
+    mysql = current_app.config["mysql"]
     global LOGGED
     cursor = mysql.connection.cursor()
     if request.method == "GET":
@@ -268,6 +278,7 @@ def resident_page(residentid):
         return redirect(url_for("resident_page",residentid=residentid))
 
 def resident_edit_page(residentid):
+    mysql = current_app.config["mysql"]
     global LOGGED
     global homeid
     cursor = mysql.connection.cursor()
@@ -316,6 +327,7 @@ def resident_edit_page(residentid):
         return redirect(url_for("resident_page", residentid=residentid,islogged=LOGGED))
 
 def nurses_page():
+    mysql = current_app.config["mysql"]
     cursor = mysql.connection.cursor()
     if request.method == "GET":
         global homeid
@@ -341,6 +353,7 @@ def nurses_page():
         return redirect(url_for("nurses_page"))
 
 def nurse_add_page():
+    mysql = current_app.config["mysql"]
     global LOGGED
     if request.method == "GET":
         values = {"name": "", "capacity": "", "type":"","tel":"","address":""}
@@ -368,6 +381,7 @@ def nurse_add_page():
         return redirect(url_for("nurses_page"))
         
 def nurse_page(nurseid): 
+    mysql = current_app.config["mysql"]
     global LOGGED
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT * FROM Nurse WHERE nurseid=%s",(nurseid,) )
@@ -378,6 +392,7 @@ def nurse_page(nurseid):
     return render_template("nurse.html",nurseid=nurseid, values=values,islogged=LOGGED,residents=residents)
 
 def nurse_edit_page(nurseid):
+    mysql = current_app.config["mysql"]
     global LOGGED
     cursor = mysql.connection.cursor()
     if request.method == "GET":
@@ -404,6 +419,7 @@ def nurse_edit_page(nurseid):
         return redirect(url_for("nurse_page", nurseid=nurseid,islogged=LOGGED))
     
 def signup_page():
+    mysql = current_app.config["mysql"]
     if request.method == "GET":
         values = {"name": "", "homename": "","city":"", "email":"","password":"", "password2":"",
         "type":"", "address":"", "tel":""
@@ -540,6 +556,7 @@ def signup_page():
     return redirect(url_for("login_page"))
 
 def login_page():
+    mysql = current_app.config["mysql"]
     global LOGGED
     if request.method == "GET":
         values = {"email":"","password":""}
@@ -582,6 +599,7 @@ def login_page():
             return redirect(url_for("login_page",islogged=islogged))
 
 def filter_page():
+    mysql = current_app.config["mysql"]
     global LOGGED
     global homeid
     cursor = mysql.connection.cursor()
@@ -630,6 +648,7 @@ def filter_page():
             return render_template("filter.html",islogged=LOGGED,result=result,residents=residents,residents2=residents2,diseases=diseases)
 
 def review_page():
+    mysql = current_app.config["mysql"]
     global LOGGED
     global homeid
     cursor = mysql.connection.cursor()
@@ -653,6 +672,7 @@ def review_page():
             return render_template("review.html",islogged=LOGGED, periods=periods,diseasenames =diseasenames,period=form_period)
 
 def profile_page():
+    mysql = current_app.config["mysql"]
     global LOGGED
     global homeid
     cursor = mysql.connection.cursor()
@@ -678,6 +698,7 @@ def profile_page():
         return render_template("home.html",islogged=LOGGED,name=name,date=date_time)
 
 def profile_edit_page():
+    mysql = current_app.config["mysql"]
     global LOGGED
     cursor = mysql.connection.cursor()
     if request.method == "GET":
