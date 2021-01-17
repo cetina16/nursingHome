@@ -1,2 +1,2 @@
 web: gunicorn server:app
-Release python server.py
+Relase python server.py
