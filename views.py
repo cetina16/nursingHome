@@ -643,6 +643,7 @@ def filter_page():
         diseases = cursor.fetchall()
         residents = None
         residents2 = None
+        diseasename = None
         if request.method == "GET":
             default = "0"
             return render_template("filter.html", diseases=diseases,residents=residents,residents2=residents2, default=default,result=result)
@@ -652,7 +653,7 @@ def filter_page():
                 diseaseid = str(form_diseaseid)
                 if diseaseid == "0":
                     flash("Select a disease! If there is no disease in the system yet, please add a disease first!") 
-                    return redirect(url_for("filter_page"))
+                    return render_template("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename)
                 else:
                     query = """SELECT Resident.residentid, Resident.name
                                     FROM Resident INNER JOIN Diseaseowners ON Resident.residentid=Diseaseowners.residentid 
