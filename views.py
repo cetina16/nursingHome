@@ -3,7 +3,6 @@ from datetime import date
 from flask_mysqldb import MySQL
 from passlib.hash import pbkdf2_sha256 as hasher
 
-mysql = current_app.config["mysql"]
 
 homeid = 0
 doctorid = 0
