@@ -412,8 +412,8 @@ def nurse_page(nurseid):
         cursor.execute("SELECT name FROM Resident WHERE nurseid=%s",(nurseid,) )
         residents = cursor.fetchall()
         cursor.close()
-        return redirect(url_for("nurse.html",nurseid=nurseid, values=values,residents=residents))
-        #return render_template("nurse.html",nurseid=nurseid, values=values,residents=residents)
+        #return redirect(url_for("nurse.html",nurseid=nurseid, values=values,residents=residents))
+        return render_template("nurse.html",nurseid=nurseid, values=values,residents=residents)
     else:
         return redirect(url_for("login_page"))
 
@@ -664,8 +664,8 @@ def filter_page():
                     cursor.execute("SELECT name FROM Disease WHERE diseaseid={0}".format(form_diseaseid))
                     diseasename = cursor.fetchone()
                     cursor.close()
-                    return redirect(url_for("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename))
-                    #return render_template("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename)
+                    #return redirect(url_for("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename))
+                    return render_template("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename)
             else:
                 risklevel = 5
                 query = """SELECT DISTINCT Resident.name
@@ -675,8 +675,8 @@ def filter_page():
                                 """.format(risklevel)
                 cursor.execute(query) 
                 residents2 = cursor.fetchall()
-                return redirect(url_for("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases))
-                #return render_template("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases)
+                #return redirect(url_for("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases))
+                return render_template("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases)
     else:
         return redirect(url_for("login_page"))
 
