@@ -587,7 +587,8 @@ def signup_page():
             mysql.connection.commit()
             cursor.close()
         flash("Account created!")
-        return redirect(url_for(login_page))
+        return render_template("login.html")
+        #return redirect(url_for(login_page))
 
 def login_page():
     if "homeid" in session:
@@ -702,8 +703,8 @@ def review_page():
                 cursor.execute(query)
                 diseasenames = cursor.fetchall()
                 cursor.close()
-                return redirect(url_for("review.html", periods=periods,diseasenames =diseasenames,period=form_period))
-                #return render_template("review.html", periods=periods,diseasenames =diseasenames,period=form_period)
+                #return redirect(url_for("review.html", periods=periods,diseasenames =diseasenames,period=form_period))
+                return render_template("review.html", periods=periods,diseasenames =diseasenames,period=form_period)
     else:
         return redirect(url_for("login_page"))
 
