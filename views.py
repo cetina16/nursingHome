@@ -1,8 +1,9 @@
-from flask import Flask,render_template,request,redirect,url_for,flash
+from flask import Flask,render_template,request,redirect,url_for,flash,current_app
 from datetime import date
 from flask_mysqldb import MySQL
 from passlib.hash import pbkdf2_sha256 as hasher
-from server import app, mysql
+
+mysql = current_app.config["mysql"]
 
 homeid = 0
 doctorid = 0
