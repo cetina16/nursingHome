@@ -584,8 +584,8 @@ def login_page():
 
                 mysql.connection.commit()
                 cursor.close()
-                #return render_template("home.html",islogged=islogged,name=name,date=date_time)
-                return redirect(url_for("home",islogged=islogged,name=name,date=date_time))
+                return render_template("home.html",islogged=islogged,name=name,date=date_time)
+                #return redirect(url_for("home",islogged=islogged,name=name,date=date_time))
             else:
                 islogged = LOGGED
                 flash("Wrong Password!")
