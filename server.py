@@ -2,7 +2,7 @@ from flask import Flask, render_template,request
 import views
 from flask_mysqldb import MySQLdb
 
- app = Flask(__name__)
+app = Flask(__name__)
 
 def create_app():
 
