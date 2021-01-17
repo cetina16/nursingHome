@@ -3,11 +3,12 @@ import views
 from flask_mysqldb import MySQLdb
 
 app = Flask(__name__)
+@app.route('/')
 
 def create_app():
 
     app.config.from_object("settings")
-
+   
     app.add_url_rule("/", view_func=views.home)
     app.add_url_rule("/signup", view_func=views.signup_page, methods=["GET", "POST"])
     app.add_url_rule("/login", view_func=views.login_page, methods=["GET", "POST"])
