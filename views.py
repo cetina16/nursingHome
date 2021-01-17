@@ -672,8 +672,8 @@ def filter_page():
                 query = """SELECT DISTINCT Resident.name
                                     FROM Resident INNER JOIN Diseaseowners ON Resident.residentid=Diseaseowners.residentid 
                                     INNER JOIN Disease ON Disease.diseaseid=Diseaseowners.diseaseid
-                                    WHERE Disease.risklevel={0}
-                                """.format(risklevel)
+                                    WHERE Disease.risklevel={0} AND Disease.homeid={1}
+                                """.format(risklevel,homeid)
                 cursor.execute(query) 
                 residents2 = cursor.fetchall()
                 #return redirect(url_for("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases))
