@@ -1,8 +1,8 @@
-from flask import render_template,request,redirect,url_for,flash
+from flask import Flask,render_template,request,redirect,url_for,flash
 from datetime import date
-from flask import current_app
+from flask_mysqldb import MySQL
 from passlib.hash import pbkdf2_sha256 as hasher
-from flask_mysqldb import MySQLdb
+from server import app, mysql
 
 homeid = 0
 doctorid = 0
@@ -17,8 +17,7 @@ def home():
     diseases = None
     global homeid
     if homeid != 0:
-        db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-        cursor = db.cursor()
+        cursor = mysql.connection.cursor()
         cursor.execute("SELECT * FROM Doctor WHERE nursinghomeid=%s",(homeid,))
         data = cursor.fetchone()
         name = data[2]  #doctor name
@@ -36,8 +35,7 @@ def home():
 def resident_disease_page(residentid):
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-    cursor = db.cursor()
+    cursor = mysql.connection.cursor()
     if request.method == "GET":
         values = {"startdate": "", "enddate":"","diseaseid":"","note":""}
         cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
@@ -66,15 +64,14 @@ def resident_disease_page(residentid):
                 cursor.execute(query, data)
             else:
                 cursor.execute("UPDATE Diseaseowners SET startdate='{0}', enddate='{1}',note='{2}' WHERE residentid={3} AND diseaseid={3}".format(startdate,enddate,note,residentid,diseaseid))
-        db.commit()
+        mysql.connection.commit()
         cursor.close()
         return redirect(url_for("resident_page", residentid=residentid,islogged=LOGGED))
 
 def disease_add_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-    cursor = db.cursor()
+    cursor = mysql.connection.cursor()
     if request.method == "GET":
         values = {"name": "", "risklevel": "", "period": "", "periodnumber":""}
         cursor.close()
@@ -96,16 +93,15 @@ def disease_add_page():
         insert_stmt = "INSERT INTO Disease(name,risklevel,period,homeid) VALUES (%s,%s,%s,%s)"
         data = (name,risklevel,period,homeid)
         cursor.execute(insert_stmt, data)
-        db.commit()
+        mysql.connection.commit()
         cursor.close()
         return redirect(url_for("diseases_page"))
 
 def diseases_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
+    cursor = mysql.connection.cursor()
     if request.method == "GET":
-        cursor = db.cursor()
         query = """SELECT diseaseid,name,period,risklevel FROM Disease 
                     WHERE homeid={0} ORDER BY name
                 """.format(homeid)
@@ -114,7 +110,6 @@ def diseases_page():
         return render_template("diseases.html",values=values,islogged=LOGGED)
     else:
         form_disease_ids = request.form.getlist("disease_ids")
-        cursor = db.cursor()
         for disease_id in form_disease_ids:
             cursor.execute("SELECT * FROM Disease WHERE diseaseid=%s",(disease_id,) )
             data = cursor.fetchone()
@@ -125,14 +120,13 @@ def diseases_page():
                     flash("There is a resident with this disease or activity!")
                 else:
                     cursor.execute("DELETE FROM Disease WHERE diseaseid=%s",(disease_id,) )
-                db.commit()
+                mysql.connection.commit()
         cursor.close()
         return redirect(url_for("diseases_page"))
    
 def disease_page(diseaseid):
     global LOGGED
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-    cursor = db.cursor()
+    cursor = mysql.connection.cursor()
     cursor.execute("SELECT * FROM Disease WHERE diseaseid=%s",(diseaseid,) )
     values = cursor.fetchone()
     cursor.execute("SELECT name FROM Disease WHERE diseaseid=%s",(diseaseid,) )
@@ -142,8 +136,7 @@ def disease_page(diseaseid):
 
 def disease_edit_page(diseaseid):
     global LOGGED
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-    cursor = db.cursor()
+    cursor = mysql.connection.cursor()
     cursor.execute("SELECT name,risklevel FROM Disease WHERE diseaseid=%s",(diseaseid,) )
     values_place = cursor.fetchone()
     if request.method == "GET":
@@ -165,7 +158,7 @@ def disease_edit_page(diseaseid):
     
         query = "UPDATE Disease SET name='{0}', risklevel={1}, period='{2}' WHERE diseaseid={3}".format(name, risklevel, period,diseaseid)
         cursor.execute(query)
-        db.commit()
+        mysql.connection.commit()
         cursor.close()
         return redirect(url_for("disease_page", diseaseid=diseaseid,islogged=LOGGED))
 
@@ -184,8 +177,7 @@ def logout_page():
 def resident_add_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-    cursor = db.cursor()
+    cursor = mysql.connection.cursor()
     if request.method == "GET":
         values = {"name": "", "age": "", "gender": "","tel":"","bedridden":""}
         cursor.execute("SELECT nurseid, name FROM Nurse WHERE capacity >0 AND capacity_exist<capacity AND nursinghomeid=%s",(homeid,))
@@ -219,15 +211,14 @@ def resident_add_page():
             capacity_exist = int(capacity_exist_str[0]) + 1
             query = "UPDATE Nurse SET capacity_exist={0} WHERE nurseid={1}".format(capacity_exist,nurseid)
             cursor.execute(query)
-            db.commit()
+            mysql.connection.commit()
             cursor.close()
             return redirect(url_for("residents_page"))
 
 def residents_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-    cursor = db.cursor()
+    cursor = mysql.connection.cursor()
     if request.method == "GET":
         #JOIN 
         query = """SELECT Resident.residentid, Resident.name,Resident.age,Resident.gender,Resident.bedridden, Resident.tel, Nurse.nursinghomeid 
@@ -245,15 +236,14 @@ def residents_page():
             data = cursor.fetchone() 
             if data is not None:
                 cursor.execute("DELETE FROM Resident WHERE residentid=%s",(resident_id,) )
-                db.commit()
+                mysql.connection.commit()
         cursor.close()
         return redirect(url_for("residents_page"))
 
 def resident_page(residentid): 
     global LOGGED
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
+    cursor = mysql.connection.cursor()
     if request.method == "GET":
-        cursor = db.cursor()
         cursor.execute("SELECT * FROM Resident WHERE residentid=%s",(residentid,) )
         values = cursor.fetchone()
         cursor.execute("SELECT name FROM Nurse WHERE nurseid=%s",(values[6],))
@@ -267,23 +257,20 @@ def resident_page(residentid):
         cursor.close()
         return render_template("resident.html",residentid=residentid, values=values,nurse_name=nurse_name,islogged=LOGGED,diseases=diseases)
     else:
-        cursor = db.cursor()
         form_disease_ids = request.form.getlist("disease_ids")
         for diseaseid in form_disease_ids:
             cursor.execute("SELECT * FROM Diseaseowners WHERE residentid={0} AND diseaseid={1}".format(residentid,diseaseid))
             data = cursor.fetchone() 
             if data is not None:
                 cursor.execute("DELETE FROM Diseaseowners WHERE residentid={0} AND diseaseid={1}".format(residentid,diseaseid))
-                db.commit()
+                mysql.connection.commit()
         cursor.close()
         return redirect(url_for("resident_page",residentid=residentid))
 
 def resident_edit_page(residentid):
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-    cursor = db.cursor()
-
+    cursor = mysql.connection.cursor()
     if request.method == "GET":
         values = {"name": "", "age": "", "gender":"","tel":"","bedridden":""}
         cursor.execute("SELECT nurseid, name FROM Nurse WHERE capacity >0 AND capacity_exist<capacity AND nursinghomeid=%s",(homeid,))
@@ -324,23 +311,21 @@ def resident_edit_page(residentid):
         
         query = "UPDATE Resident SET name='{0}', age={1}, gender='{2}', tel='{3}', bedridden='{4}', nurseid={5} WHERE residentid={6}".format(name, age, gender ,tel, bedridden,nurseid ,residentid)
         cursor.execute(query)
-        db.commit()
+        mysql.connection.commit()
         cursor.close()
         return redirect(url_for("resident_page", residentid=residentid,islogged=LOGGED))
 
 def nurses_page():
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
+    cursor = mysql.connection.cursor()
     if request.method == "GET":
         global homeid
         global LOGGED
-        cursor = db.cursor()
         cursor.execute("SELECT nurseid, name,capacity,type,address,tel FROM Nurse WHERE nursinghomeid=%s ORDER BY name",(homeid,))
         values = cursor.fetchall()
         cursor.close()
         return render_template("nurses.html",values=values,islogged=LOGGED)
     else:
         form_nurse_ids = request.form.getlist("nurse_ids")
-        cursor = db.cursor()
         for nurse_id in form_nurse_ids:
             cursor.execute("SELECT * FROM Nurse WHERE nurseid=%s",(nurse_id,) )
             data = cursor.fetchone()
@@ -351,7 +336,7 @@ def nurses_page():
                     flash("There are resident(s) assigned to this nurse. Please delete the resident(s) first!")
                 else:
                     cursor.execute("DELETE FROM Nurse WHERE nurseid=%s",(nurse_id,) )
-                db.commit()
+                mysql.connection.commit()
         cursor.close()
         return redirect(url_for("nurses_page"))
 
@@ -374,20 +359,17 @@ def nurse_add_page():
         address = str(form_address)
         exist = 0
         capacity_exist = str(exist)
-        db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-        cursor = db.cursor()
-
+        cursor = mysql.connection.cursor()
         insert_stmt = "INSERT INTO Nurse(name,capacity,capacity_exist,type,address,tel,nursinghomeid) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         data = (name,capacity,capacity_exist,type_,address,tel,homeid)
         cursor.execute(insert_stmt, data)
-        db.commit()
+        mysql.connection.commit()
         cursor.close()
         return redirect(url_for("nurses_page"))
         
 def nurse_page(nurseid): 
     global LOGGED
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-    cursor = db.cursor()
+    cursor = mysql.connection.cursor()
     cursor.execute("SELECT * FROM Nurse WHERE nurseid=%s",(nurseid,) )
     values = cursor.fetchone()
     cursor.execute("SELECT name FROM Resident WHERE nurseid=%s",(nurseid,) )
@@ -397,8 +379,7 @@ def nurse_page(nurseid):
 
 def nurse_edit_page(nurseid):
     global LOGGED
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-    cursor = db.cursor()
+    cursor = mysql.connection.cursor()
     if request.method == "GET":
         cursor.execute("SELECT capacity_exist FROM Nurse WHERE nurseid=%s",(nurseid,) )
         capacity_exist = cursor.fetchone()
@@ -418,7 +399,7 @@ def nurse_edit_page(nurseid):
         address = str(form_address)
         query = "UPDATE Nurse SET name='{0}', capacity={1}, type='{2}', tel='{3}', address='{4}' WHERE nurseid={5}".format(name, capacity, type_ ,tel, address, nurseid)
         cursor.execute(query)
-        db.commit()
+        mysql.connection.commit()
         cursor.close()
         return redirect(url_for("nurse_page", nurseid=nurseid,islogged=LOGGED))
     
@@ -429,8 +410,7 @@ def signup_page():
         }
         return render_template("signup.html", values = values,)
     else:
-        db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-        cursor = db.cursor()
+        cursor = mysql.connection.cursor()
         #cursor.execute("DROP TABLE IF EXISTS Diseaseowners")
         #cursor.execute("DROP TABLE IF EXISTS Resident")
         #cursor.execute("DROP TABLE IF EXISTS Nurse")
@@ -554,7 +534,7 @@ def signup_page():
         line2 = "INSERT INTO Doctor(name,email,password,nursinghomeid) VALUES (%s,%s,%s,%s)"
         data2 = (name,email,hashed_password,homeid)
         cursor.execute(line2, data2)
-        db.commit()
+        mysql.connection.commit()
         cursor.close()
     flash("Account created!")
     return redirect(url_for("login_page"))
@@ -568,8 +548,7 @@ def login_page():
         form_email = request.form["email"]
         form_password = request.form["password"]
 
-        db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-        cursor = db.cursor()
+        cursor = mysql.connection.cursor()
         cursor.execute("SELECT * FROM Doctor WHERE email=%s",(form_email,) )
 
         data = cursor.fetchone()
@@ -588,10 +567,8 @@ def login_page():
                 LOGGED = True
                 islogged = LOGGED
                 flash("You have logged in.")
-                db = MySQLdb.connect(host="localhost", user="root", passwd="1616", db="db_nursing")
-                cursor = db.cursor()
-               
-                db.commit()
+
+                mysql.connection.commit()
                 cursor.close()
                 #return render_template("home.html",islogged=islogged,name=name,date=date_time)
                 return redirect(url_for("home",islogged=islogged,name=name,date=date_time))
@@ -607,8 +584,7 @@ def login_page():
 def filter_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-    cursor = db.cursor()
+    cursor = mysql.connection.cursor()
     cursor.execute("""SELECT  Disease.name ,COUNT(residentid)
                     FROM Diseaseowners INNER JOIN Disease ON Disease.diseaseid=Diseaseowners.diseaseid
                     WHERE Disease.homeid={0}
@@ -644,7 +620,7 @@ def filter_page():
                 return render_template("filter.html",islogged=LOGGED,result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename)
         else:
             risklevel = 5
-            query = """SELECT Resident.name
+            query = """SELECT DISTINCT Resident.name
                                 FROM Resident INNER JOIN Diseaseowners ON Resident.residentid=Diseaseowners.residentid 
                                 INNER JOIN Disease ON Disease.diseaseid=Diseaseowners.diseaseid
                                 WHERE Disease.risklevel={0}
@@ -652,11 +628,11 @@ def filter_page():
             cursor.execute(query) 
             residents2 = cursor.fetchall()
             return render_template("filter.html",islogged=LOGGED,result=result,residents=residents,residents2=residents2,diseases=diseases)
+
 def review_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-    cursor = db.cursor()
+    cursor = mysql.connection.cursor()
     cursor.execute("SELECT period FROM Disease WHERE homeid={0}".format(homeid))
     periods = cursor.fetchall()
     default = "0"
@@ -679,8 +655,7 @@ def review_page():
 def profile_page():
     global LOGGED
     global homeid
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-    cursor = db.cursor()
+    cursor = mysql.connection.cursor()
     if request.method == "GET":
         cursor.execute("""SELECT Doctor.name,Doctor.email,Nursinghome.name,Nursinghome.city,Nursinghome.address,
                             Nursinghome.type, Nursinghome.tel
@@ -697,15 +672,14 @@ def profile_page():
         cursor.execute("DELETE FROM Doctor WHERE nursinghomeid=%s",(homeid,) )
         cursor.execute("DELETE FROM Nursinghome WHERE homeid=%s",(homeid,) )
        
-        db.commit()
+        mysql.connection.commit()
         homeid = 0
         cursor.close()
         return render_template("home.html",islogged=LOGGED,name=name,date=date_time)
 
 def profile_edit_page():
     global LOGGED
-    db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
-    cursor = db.cursor()
+    cursor = mysql.connection.cursor()
     if request.method == "GET":
         values = {"dr_name": "", "h_name": "", "email":"","tel":"","address":"","city":"","type":""}
         return render_template("profile_edit.html", values = values,islogged=LOGGED)
@@ -733,6 +707,6 @@ def profile_edit_page():
         query = "UPDATE Nursinghome SET name='{0}', city='{1}', type='{2}', tel='{3}', address='{4}' WHERE homeid={5}".format(h_name, city, type_ ,tel, address, homeid)
         cursor.execute(query)
 
-        db.commit()
+        mysql.connection.commit()
         cursor.close()
         return redirect(url_for("profile_page", islogged=LOGGED))
