@@ -663,7 +663,6 @@ def filter_page():
                     diseases = cursor.fetchall()
                     cursor.execute("SELECT name FROM Disease WHERE diseaseid={0}".format(form_diseaseid))
                     diseasename = cursor.fetchone()
-
                     cursor.close()
                     return redirect(url_for("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename))
                     #return render_template("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename)
@@ -676,7 +675,8 @@ def filter_page():
                                 """.format(risklevel)
                 cursor.execute(query) 
                 residents2 = cursor.fetchall()
-                return render_template("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases)
+                return redirect(url_for("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases))
+                #return render_template("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases)
     else:
         return redirect(url_for("login_page"))
 
@@ -721,16 +721,15 @@ def profile_page():
             values= cursor.fetchone()
             return render_template("profile.html",values=values)
         else:
-            session.pop("homeid",None)
             name = None
             today = date.today()
             date_time = today.strftime("%m/%d/%Y")
             cursor.execute("DELETE FROM Doctor WHERE nursinghomeid=%s",(homeid,) )
             cursor.execute("DELETE FROM Nursinghome WHERE homeid=%s",(homeid,) )
-        
+            session.pop("homeid",None)
             mysql.connection.commit()
             cursor.close()
-            return redirect(url_for("home.html",name=name,date=date_time))
+            return redirect(url_for("login_page"))
             #return render_template("home.html",name=name,date=date_time)
     else:
         return redirect(url_for("login_page"))
