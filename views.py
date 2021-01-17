@@ -67,7 +67,8 @@ def resident_disease_page(residentid):
                     cursor.execute("UPDATE Diseaseowners SET startdate='{0}', enddate='{1}',note='{2}' WHERE residentid={3} AND diseaseid={3}".format(startdate,enddate,note,residentid,diseaseid))
             mysql.connection.commit()
             cursor.close()
-            return render_template("resident_page", residentid=residentid)
+            return redirect (url_for("resident_page",residentid=residentid))
+            #return render_template("resident_page", residentid=residentid)
     else:
         return redirect(url_for("login_page"))
 
@@ -411,7 +412,8 @@ def nurse_page(nurseid):
         cursor.execute("SELECT name FROM Resident WHERE nurseid=%s",(nurseid,) )
         residents = cursor.fetchall()
         cursor.close()
-        return render_template("nurse.html",nurseid=nurseid, values=values,residents=residents)
+        return redirect(url_for("nurse.html",nurseid=nurseid, values=values,residents=residents))
+        #return render_template("nurse.html",nurseid=nurseid, values=values,residents=residents)
     else:
         return redirect(url_for("login_page"))
 
@@ -663,7 +665,8 @@ def filter_page():
                     diseasename = cursor.fetchone()
 
                     cursor.close()
-                    return render_template("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename)
+                    return redirect(url_for("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename))
+                    #return render_template("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename)
             else:
                 risklevel = 5
                 query = """SELECT DISTINCT Resident.name
@@ -699,7 +702,8 @@ def review_page():
                 cursor.execute(query)
                 diseasenames = cursor.fetchall()
                 cursor.close()
-                return render_template("review.html", periods=periods,diseasenames =diseasenames,period=form_period)
+                return redirect(url_for("review.html", periods=periods,diseasenames =diseasenames,period=form_period))
+                #return render_template("review.html", periods=periods,diseasenames =diseasenames,period=form_period)
     else:
         return redirect(url_for("login_page"))
 
@@ -726,7 +730,8 @@ def profile_page():
         
             mysql.connection.commit()
             cursor.close()
-            return render_template("home.html",name=name,date=date_time)
+            return redirect(url_for("home.html",name=name,date=date_time))
+            #return render_template("home.html",name=name,date=date_time)
     else:
         return redirect(url_for("login_page"))
 
