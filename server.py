@@ -7,8 +7,7 @@ from flask_mysqldb import MySQL
 app = Flask(__name__)
 mysql = MySQL(app)
 
-homeid = 0
-LOGGED = False
+
 
 app.config["app"]=app
 app.config["mysql"]=mysql
