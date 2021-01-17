@@ -588,7 +588,7 @@ def signup_page():
             cursor.close()
         flash("Account created!")
         #return render_template("login.html")
-        #return redirect(url_for(login_page))
+        return redirect(url_for(login_page))
 
 def login_page():
     if "homeid" in session:
