@@ -449,11 +449,11 @@ def nurse_edit_page(nurseid):
     
 
 def signup_page():
+    mysql = current_app.config["mysql"]
     if "homeid" in session:
         homeid = session["homeid"]
         return redirect(url_for("home"))
     else:
-        mysql = current_app.config["mysql"]
         if request.method == "GET":
             values = {"name": "", "homename": "","city":"", "email":"","password":"", "password2":"",
             "type":"", "address":"", "tel":""
