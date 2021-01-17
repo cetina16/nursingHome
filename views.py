@@ -4,7 +4,6 @@ from flask_mysqldb import MySQL
 from passlib.hash import pbkdf2_sha256 as hasher
 
 
-
 def home():
     mysql = current_app.config["mysql"]
     today = date.today()
@@ -29,45 +28,48 @@ def home():
             cursor.execute("SELECT name FROM Disease WHERE homeid={0}".format(homeid))
             diseases = cursor.fetchall()
             cursor.close()
-    return render_template("home.html",date=date_time,name=name, residents=residents,nurses=nurses,diseases=diseases)
-
+            return render_template("home.html",date=date_time,name=name, residents=residents,nurses=nurses,diseases=diseases)
+    else:
+        return redirect(url_for("login_page"))
 
 def resident_disease_page(residentid):
     mysql = current_app.config["mysql"]
-    global LOGGED
-    global homeid
-    cursor = mysql.connection.cursor()
-    if request.method == "GET":
-        values = {"startdate": "", "enddate":"","diseaseid":"","note":""}
-        cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
-        diseases = cursor.fetchall()
-        cursor.close()
-        default = "0"
-        return render_template("resident_disease.html", values = values,islogged=LOGGED,diseases=diseases,default=default)
-    else:
-        form_disease = request.form["diseaseid"]
-        form_startdate = request.form["startdate"]
-        form_enddate = request.form["enddate"]
-        form_note = request.form["note"]
-        note = str(form_note)
-        diseaseid = str(form_disease)
-        startdate = str(form_startdate)
-        enddate = str(form_enddate)
-        cursor.execute("SELECT * FROM Diseaseowners WHERE residentid={0} AND diseaseid={1}".format(residentid,diseaseid))
-        control = cursor.fetchone()
-        if diseaseid == "0":
-            flash("You should first add a disease or periodic activity to the system.") 
-            return render_template("resident.html",residentid=residentid,islogged=LOGGED)
+    if "homeid" in session:
+        homeid = session["homeid"]
+        cursor = mysql.connection.cursor()
+        if request.method == "GET":
+            values = {"startdate": "", "enddate":"","diseaseid":"","note":""}
+            cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
+            diseases = cursor.fetchall()
+            cursor.close()
+            default = "0"
+            return render_template("resident_disease.html", values = values,islogged=LOGGED,diseases=diseases,default=default)
         else:
-            if control is None:
-                query = "INSERT INTO Diseaseowners(residentid,diseaseid,startdate,enddate,note) VALUES (%s,%s,%s,%s,%s)"
-                data = (residentid,diseaseid,startdate,enddate,note)
-                cursor.execute(query, data)
+            form_disease = request.form["diseaseid"]
+            form_startdate = request.form["startdate"]
+            form_enddate = request.form["enddate"]
+            form_note = request.form["note"]
+            note = str(form_note)
+            diseaseid = str(form_disease)
+            startdate = str(form_startdate)
+            enddate = str(form_enddate)
+            cursor.execute("SELECT * FROM Diseaseowners WHERE residentid={0} AND diseaseid={1}".format(residentid,diseaseid))
+            control = cursor.fetchone()
+            if diseaseid == "0":
+                flash("You should first add a disease or periodic activity to the system.") 
+                return render_template("resident.html",residentid=residentid)
             else:
-                cursor.execute("UPDATE Diseaseowners SET startdate='{0}', enddate='{1}',note='{2}' WHERE residentid={3} AND diseaseid={3}".format(startdate,enddate,note,residentid,diseaseid))
-        mysql.connection.commit()
-        cursor.close()
-        return render_template("resident_page", residentid=residentid,islogged=LOGGED)
+                if control is None:
+                    query = "INSERT INTO Diseaseowners(residentid,diseaseid,startdate,enddate,note) VALUES (%s,%s,%s,%s,%s)"
+                    data = (residentid,diseaseid,startdate,enddate,note)
+                    cursor.execute(query, data)
+                else:
+                    cursor.execute("UPDATE Diseaseowners SET startdate='{0}', enddate='{1}',note='{2}' WHERE residentid={3} AND diseaseid={3}".format(startdate,enddate,note,residentid,diseaseid))
+            mysql.connection.commit()
+            cursor.close()
+            return render_template("resident_page", residentid=residentid)
+    else:
+        return redirect(url_for("login_page"))
 
 def disease_add_page():
     mysql = current_app.config["mysql"]
@@ -98,6 +100,8 @@ def disease_add_page():
             mysql.connection.commit()
             cursor.close()
             return redirect(url_for("diseases_page"))
+    else:
+        return redirect(url_for("login_page"))
 
 def diseases_page():
     mysql = current_app.config["mysql"]
@@ -126,7 +130,8 @@ def diseases_page():
                     mysql.connection.commit()
             cursor.close()
             return redirect(url_for("diseases_page"))
-   
+    else:
+        return redirect(url_for("login_page"))
 def disease_page(diseaseid):
     mysql = current_app.config["mysql"]
     if "homeid" in session:
@@ -138,6 +143,8 @@ def disease_page(diseaseid):
         diseases = cursor.fetchall()
         cursor.close()
         return render_template("disease.html",diseaseid=diseaseid, values=values,diseases=diseases)
+    else:
+        return redirect(url_for("login_page"))
 
 def disease_edit_page(diseaseid):
     mysql = current_app.config["mysql"]
@@ -150,7 +157,6 @@ def disease_edit_page(diseaseid):
             values = {"name": "", "risklevel": "", "period":"", "periodnumber":""}
             return render_template("disease_edit_exist.html", values = values,values_place=values_place)
         else:
-        
             form_name = request.form["name"]
             form_risklevel = request.form["risklevel"]
             form_period = request.form["period"]
@@ -167,15 +173,20 @@ def disease_edit_page(diseaseid):
             mysql.connection.commit()
             cursor.close()
             return redirect(url_for("disease_page", diseaseid=diseaseid))
+    else:
+        return redirect(url_for("login_page"))
 
 def logout_page():
     mysql = current_app.config["mysql"]
-    today = date.today()
-    date_time = today.strftime("%m/%d/%Y")
+    if "homeid" in session:
+        today = date.today()
+        date_time = today.strftime("%m/%d/%Y")
+        session.pop("homeid",None)
+        name = None
+        return redirect(url_for("login_page"))
+    else:
+        return redirect(url_for("login_page"))
 
-    session.pop("homeid",None)
-    name = None
-    return render_template("home.html",name=name,date=date_time)
 
 
 
@@ -220,6 +231,8 @@ def resident_add_page():
                 mysql.connection.commit()
                 cursor.close()
                 return redirect(url_for("residents_page"))
+    else:
+        return redirect(url_for("login_page"))
 
 def residents_page():
     mysql = current_app.config["mysql"]
@@ -245,6 +258,8 @@ def residents_page():
                     mysql.connection.commit()
             cursor.close()
             return redirect(url_for("residents_page"))
+    else:
+        return redirect(url_for("login_page"))
 
 def resident_page(residentid): 
     mysql = current_app.config["mysql"]
@@ -274,6 +289,8 @@ def resident_page(residentid):
                     mysql.connection.commit()
             cursor.close()
             return redirect(url_for("resident_page",residentid=residentid))
+    else:
+        return redirect(url_for("login_page"))
 
 def resident_edit_page(residentid):
     mysql = current_app.config["mysql"]
@@ -323,6 +340,8 @@ def resident_edit_page(residentid):
             mysql.connection.commit()
             cursor.close()
             return redirect(url_for("resident_page", residentid=residentid))
+    else:
+        return redirect(url_for("login_page"))
 
 def nurses_page():
     mysql = current_app.config["mysql"]
@@ -349,6 +368,8 @@ def nurses_page():
                     mysql.connection.commit()
             cursor.close()
             return redirect(url_for("nurses_page"))
+    else:
+        return redirect(url_for("login_page"))
 
 def nurse_add_page():
     mysql = current_app.config["mysql"]
@@ -377,7 +398,9 @@ def nurse_add_page():
             mysql.connection.commit()
             cursor.close()
             return redirect(url_for("nurses_page"))
-        
+    else:
+        return redirect(url_for("login_page"))
+
 def nurse_page(nurseid): 
     mysql = current_app.config["mysql"]
     if "homeid" in session:
@@ -389,6 +412,8 @@ def nurse_page(nurseid):
         residents = cursor.fetchall()
         cursor.close()
         return render_template("nurse.html",nurseid=nurseid, values=values,residents=residents)
+    else:
+        return redirect(url_for("login_page"))
 
 def nurse_edit_page(nurseid):
     mysql = current_app.config["mysql"]
@@ -417,180 +442,189 @@ def nurse_edit_page(nurseid):
             mysql.connection.commit()
             cursor.close()
             return redirect(url_for("nurse_page", nurseid=nurseid))
+    else:
+        return redirect(url_for("login_page"))
     
 
-
 def signup_page():
-    mysql = current_app.config["mysql"]
-    if request.method == "GET":
-        values = {"name": "", "homename": "","city":"", "email":"","password":"", "password2":"",
-        "type":"", "address":"", "tel":""
-        }
-        return render_template("signup.html", values = values,)
+    if "homeid" in session:
+        homeid = session["homeid"]
+        return redirect(url_for("home"))
     else:
-        cursor = mysql.connection.cursor()
-        #cursor.execute("DROP TABLE IF EXISTS Diseaseowners")
-        #cursor.execute("DROP TABLE IF EXISTS Resident")
-        #cursor.execute("DROP TABLE IF EXISTS Nurse")
-        #cursor.execute("DROP TABLE IF EXISTS Disease")
-        #cursor.execute("DROP TABLE IF EXISTS Doctor")
-        #cursor.execute("DROP TABLE IF EXISTS Nursinghome")
-        
-        cursor.execute("""CREATE TABLE IF NOT EXISTS Nursinghome(homeid INT AUTO_INCREMENT,
-                        name VARCHAR(40) NOT NULL,
-                        city VARCHAR(40) NOT NULL,
-                        type VARCHAR(40) NOT NULL,
-                        address VARCHAR(40) NOT NULL,
-                        tel VARCHAR(40) NOT NULL,
-                        PRIMARY KEY (homeid))""")
-        
-        cursor.execute("""CREATE TABLE IF NOT EXISTS Doctor(doctorid INT AUTO_INCREMENT,
-                            email VARCHAR(40) UNIQUE,
-                            name VARCHAR (40) NOT NULL ,
-                            password VARCHAR (100)  NOT NULL ,
-                            nursinghomeid INT,
-                            FOREIGN KEY (nursinghomeid)  
-                            REFERENCES Nursinghome(homeid) 
-                            ON DELETE CASCADE
+        mysql = current_app.config["mysql"]
+        if request.method == "GET":
+            values = {"name": "", "homename": "","city":"", "email":"","password":"", "password2":"",
+            "type":"", "address":"", "tel":""
+            }
+            return render_template("signup.html", values = values,)
+        else:
+            cursor = mysql.connection.cursor()
+            #cursor.execute("DROP TABLE IF EXISTS Diseaseowners")
+            #cursor.execute("DROP TABLE IF EXISTS Resident")
+            #cursor.execute("DROP TABLE IF EXISTS Nurse")
+            #cursor.execute("DROP TABLE IF EXISTS Disease")
+            #cursor.execute("DROP TABLE IF EXISTS Doctor")
+            #cursor.execute("DROP TABLE IF EXISTS Nursinghome")
+            
+            cursor.execute("""CREATE TABLE IF NOT EXISTS Nursinghome(homeid INT AUTO_INCREMENT,
+                            name VARCHAR(40) NOT NULL,
+                            city VARCHAR(40) NOT NULL,
+                            type VARCHAR(40) NOT NULL,
+                            address VARCHAR(40) NOT NULL,
+                            tel VARCHAR(40) NOT NULL,
+                            PRIMARY KEY (homeid))""")
+            
+            cursor.execute("""CREATE TABLE IF NOT EXISTS Doctor(doctorid INT AUTO_INCREMENT,
+                                email VARCHAR(40) UNIQUE,
+                                name VARCHAR (40) NOT NULL ,
+                                password VARCHAR (100)  NOT NULL ,
+                                nursinghomeid INT,
+                                FOREIGN KEY (nursinghomeid)  
+                                REFERENCES Nursinghome(homeid) 
+                                ON DELETE CASCADE
+                                ON UPDATE CASCADE,
+                                PRIMARY KEY (doctorid))""")
+            cursor.execute("""CREATE TABLE IF NOT EXISTS Nurse(nurseid INT AUTO_INCREMENT,
+                            name VARCHAR(40) NOT NULL,
+                            capacity INT NOT NULL,
+                            capacity_exist INT,
+                            type VARCHAR(40) NOT NULL,
+                            address VARCHAR(90) NOT NULL,
+                            tel VARCHAR(40) NOT NULL,
+                            nursinghomeid  INT NOT NULL,
+                            FOREIGN KEY (nursinghomeid) 
+                            REFERENCES Nursinghome(homeid)
+                            ON DELETE CASCADE 
                             ON UPDATE CASCADE,
-                            PRIMARY KEY (doctorid))""")
-        cursor.execute("""CREATE TABLE IF NOT EXISTS Nurse(nurseid INT AUTO_INCREMENT,
-                        name VARCHAR(40) NOT NULL,
-                        capacity INT NOT NULL,
-                        capacity_exist INT,
-                        type VARCHAR(40) NOT NULL,
-                        address VARCHAR(90) NOT NULL,
-                        tel VARCHAR(40) NOT NULL,
-                        nursinghomeid  INT NOT NULL,
-                        FOREIGN KEY (nursinghomeid) 
-                        REFERENCES Nursinghome(homeid)
-                        ON DELETE CASCADE 
-                        ON UPDATE CASCADE,
-                        PRIMARY KEY (nurseid))""")
+                            PRIMARY KEY (nurseid))""")
+            
         
-      
-        cursor.execute("""CREATE TABLE IF NOT EXISTS Disease(diseaseid INT AUTO_INCREMENT,
-                        name VARCHAR(40) NOT NULL,
-                        risklevel INT NOT NULL,
-                        period VARCHAR(40) NOT NULL,
-                        homeid INT NOT NULL,
-                        FOREIGN KEY (homeid) 
-                        REFERENCES Nursinghome(homeid)
-                        ON DELETE CASCADE 
-                        ON UPDATE CASCADE,
-                        PRIMARY KEY (diseaseid))""")
+            cursor.execute("""CREATE TABLE IF NOT EXISTS Disease(diseaseid INT AUTO_INCREMENT,
+                            name VARCHAR(40) NOT NULL,
+                            risklevel INT NOT NULL,
+                            period VARCHAR(40) NOT NULL,
+                            homeid INT NOT NULL,
+                            FOREIGN KEY (homeid) 
+                            REFERENCES Nursinghome(homeid)
+                            ON DELETE CASCADE 
+                            ON UPDATE CASCADE,
+                            PRIMARY KEY (diseaseid))""")
 
 
-        cursor.execute("""CREATE TABLE IF NOT EXISTS Resident(residentid INT AUTO_INCREMENT,
-                        name VARCHAR(40) NOT NULL,
-                        age INT NOT NULL,
-                        bedridden VARCHAR(40) NOT NULL,
-                        gender VARCHAR(20) NOT NULL,
-                        tel VARCHAR(40) NOT NULL,
-                        nurseid  INT NOT NULL,
-                        FOREIGN KEY (nurseid) 
-                        REFERENCES Nurse(nurseid)
-                        ON DELETE RESTRICT 
-                        ON UPDATE CASCADE,
-                        PRIMARY KEY (residentid))""")
-        cursor.execute("""CREATE TABLE IF NOT EXISTS Diseaseowners(residentid INT NOT NULL,
-                                diseaseid INT NOT NULL,
-                                FOREIGN KEY (residentid)	
-                                REFERENCES Resident(residentid)
-                                ON DELETE CASCADE 
-                                ON UPDATE CASCADE,
-                                FOREIGN KEY (diseaseid)	
-                                REFERENCES Disease (diseaseid)
-                                ON DELETE RESTRICT
-                                ON UPDATE CASCADE,
-                                startdate DATE NOT NULL,
-                                enddate DATE,
-                                note VARCHAR(100) NOT NULL,
-                                PRIMARY KEY(residentid , diseaseid))""")
-     
-        form_name = request.form["name"] 
-        form_homename = request.form["homename"]
-        form_city = request.form["city"]
-        form_email = request.form["email"]
-        form_password = request.form["password"]
-        form_password2 = request.form["password2"]
-        form_address = request.form["address"]
-        form_tel = request.form["tel"]
-        form_type = request.form["type"]
-
-        cursor.execute("SELECT * FROM Doctor WHERE email=%s",(form_email,) )
-        data = cursor.fetchone()
-        if data is not None:
-            flash("This email is registered in the system!")
-            return redirect(request.url)
-        if not len(form_password) >= 4:
-            flash("Password must be at least 4 characters!")
-            return redirect(request.url)
-        if form_password != form_password2:
-            flash("Please verify password!")
-            return redirect(request.url)
-
-        name = str(form_name)
-        homename = str(form_homename)
-        city = str(form_city)
-        email = str(form_email)
-        password = str (form_password)
-        address = str(form_address)
-        type_ = str (form_type)
-        tel = str(form_tel)
-
-        hashed_password = hasher.hash(password)
+            cursor.execute("""CREATE TABLE IF NOT EXISTS Resident(residentid INT AUTO_INCREMENT,
+                            name VARCHAR(40) NOT NULL,
+                            age INT NOT NULL,
+                            bedridden VARCHAR(40) NOT NULL,
+                            gender VARCHAR(20) NOT NULL,
+                            tel VARCHAR(40) NOT NULL,
+                            nurseid  INT NOT NULL,
+                            FOREIGN KEY (nurseid) 
+                            REFERENCES Nurse(nurseid)
+                            ON DELETE RESTRICT 
+                            ON UPDATE CASCADE,
+                            PRIMARY KEY (residentid))""")
+            cursor.execute("""CREATE TABLE IF NOT EXISTS Diseaseowners(residentid INT NOT NULL,
+                                    diseaseid INT NOT NULL,
+                                    FOREIGN KEY (residentid)	
+                                    REFERENCES Resident(residentid)
+                                    ON DELETE CASCADE 
+                                    ON UPDATE CASCADE,
+                                    FOREIGN KEY (diseaseid)	
+                                    REFERENCES Disease (diseaseid)
+                                    ON DELETE RESTRICT
+                                    ON UPDATE CASCADE,
+                                    startdate DATE NOT NULL,
+                                    enddate DATE,
+                                    note VARCHAR(100) NOT NULL,
+                                    PRIMARY KEY(residentid , diseaseid))""")
         
-        line1 = "INSERT INTO Nursinghome(name,city,type,address,tel) VALUES (%s,%s,%s,%s,%s)"
-        data1 = (homename,city,type_,address,tel)
-        cursor.execute(line1, data1)
+            form_name = request.form["name"] 
+            form_homename = request.form["homename"]
+            form_city = request.form["city"]
+            form_email = request.form["email"]
+            form_password = request.form["password"]
+            form_password2 = request.form["password2"]
+            form_address = request.form["address"]
+            form_tel = request.form["tel"]
+            form_type = request.form["type"]
 
-        query = "SELECT LAST_INSERT_ID()" 
-        cursor.execute(query)
-        homeid = cursor.fetchall()
+            cursor.execute("SELECT * FROM Doctor WHERE email=%s",(form_email,) )
+            data = cursor.fetchone()
+            if data is not None:
+                flash("This email is registered in the system!")
+                return redirect(request.url)
+            if not len(form_password) >= 4:
+                flash("Password must be at least 4 characters!")
+                return redirect(request.url)
+            if form_password != form_password2:
+                flash("Please verify password!")
+                return redirect(request.url)
 
-        line2 = "INSERT INTO Doctor(name,email,password,nursinghomeid) VALUES (%s,%s,%s,%s)"
-        data2 = (name,email,hashed_password,homeid)
-        cursor.execute(line2, data2)
-        mysql.connection.commit()
-        cursor.close()
-    flash("Account created!")
-    return render_template("login_html",islogged=islogged)
+            name = str(form_name)
+            homename = str(form_homename)
+            city = str(form_city)
+            email = str(form_email)
+            password = str (form_password)
+            address = str(form_address)
+            type_ = str (form_type)
+            tel = str(form_tel)
+
+            hashed_password = hasher.hash(password)
+            
+            line1 = "INSERT INTO Nursinghome(name,city,type,address,tel) VALUES (%s,%s,%s,%s,%s)"
+            data1 = (homename,city,type_,address,tel)
+            cursor.execute(line1, data1)
+
+            query = "SELECT LAST_INSERT_ID()" 
+            cursor.execute(query)
+            homeid = cursor.fetchall()
+
+            line2 = "INSERT INTO Doctor(name,email,password,nursinghomeid) VALUES (%s,%s,%s,%s)"
+            data2 = (name,email,hashed_password,homeid)
+            cursor.execute(line2, data2)
+            mysql.connection.commit()
+            cursor.close()
+        flash("Account created!")
+        return redirect(url_for(login_page))
 
 def login_page():
-    mysql = current_app.config["mysql"]
-    if request.method == "GET":
-        values = {"email":"","password":""}
-        return render_template("login.html", values = values)
+    if "homeid" in session:
+        homeid = session["homeid"]
+        return redirect(url_for(home))
     else:
-        form_email = request.form["email"]
-        form_password = request.form["password"]
-        cursor = mysql.connection.cursor()
-        cursor.execute("SELECT * FROM Doctor WHERE email=%s",(form_email,) )
-        data = cursor.fetchone()
-        cursor.close()
-        if data is not None:
-            if hasher.verify(form_password,data[3]):
-                homeid_db = data[4] #nursinghome id
-                doctorid_db = data[0]  #doctor id
-                name = data[2]
-                homeid = homeid_db
-                doctorid = doctorid_db
-                today = date.today()
-                date_time = today.strftime("%m/%d/%Y")
-                
-                flash("You have logged in.")
-
-                session["homeid"] = homeid_db
-                mysql.connection.commit()
-                cursor.close()
-                return render_template("home.html",name=name,date=date_time)
-            else:
-                flash("Wrong Password!")
-                return redirect(url_for("login_page"))
+        mysql = current_app.config["mysql"]
+        if request.method == "GET":
+            values = {"email":"","password":""}
+            return render_template("login.html", values = values)
         else:
-            flash("Wrong Email!")
-            return redirect(url_for("login_page"))
+            form_email = request.form["email"]
+            form_password = request.form["password"]
+            cursor = mysql.connection.cursor()
+            cursor.execute("SELECT * FROM Doctor WHERE email=%s",(form_email,) )
+            data = cursor.fetchone()
+            cursor.close()
+            if data is not None:
+                if hasher.verify(form_password,data[3]):
+                    homeid_db = data[4] #nursinghome id
+                    doctorid_db = data[0]  #doctor id
+                    name = data[2]
+                    homeid = homeid_db
+                    doctorid = doctorid_db
+                    today = date.today()
+                    date_time = today.strftime("%m/%d/%Y")
+                    
+                    flash("You have logged in.")
+
+                    session["homeid"] = homeid_db
+                    mysql.connection.commit()
+                    cursor.close()
+                    return redirect(url_for("home"))
+                else:
+                    flash("Wrong Password!")
+                    return redirect(url_for("login_page"))
+            else:
+                flash("Wrong Email!")
+                return redirect(url_for("login_page"))
 
 def filter_page():
     mysql = current_app.config["mysql"]
@@ -693,6 +727,8 @@ def profile_page():
             mysql.connection.commit()
             cursor.close()
             return render_template("home.html",name=name,date=date_time)
+    else:
+        return redirect(url_for("login_page"))
 
 def profile_edit_page():
     mysql = current_app.config["mysql"]
@@ -727,3 +763,5 @@ def profile_edit_page():
             mysql.connection.commit()
             cursor.close()
             return redirect(url_for("profile_page"))
+    else:
+        return redirect(url_for("login_page"))
