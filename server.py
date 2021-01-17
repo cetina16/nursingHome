@@ -33,13 +33,13 @@ def create_app():
     app.add_url_rule("/resident/<int:residentid>/disease_add", view_func=views.resident_disease_page, methods=["GET", "POST"])
     app.add_url_rule("/resident/<int:residentid>/edit", view_func=views.resident_edit_page, methods=["GET", "POST"])
    
-    
     return app
 
 
 if __name__ == "__main__":
-    app = create_app()
     app.run()
+    app = create_app()
+    
    # port = app.config.get("PORT", 5000)
    # app.run(host="0.0.0.0", port=port)
 
