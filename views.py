@@ -107,7 +107,7 @@ def diseases_page():
     if request.method == "GET":
         cursor = db.cursor()
         query = """SELECT diseaseid,name,period,risklevel FROM Disease 
-                    WHERE homeid={0}
+                    WHERE homeid={0} ORDER BY name
                 """.format(homeid)
         cursor.execute(query)
         values = cursor.fetchall()
@@ -232,7 +232,7 @@ def residents_page():
         #JOIN 
         query = """SELECT Resident.residentid, Resident.name,Resident.age,Resident.gender,Resident.bedridden, Resident.tel, Nurse.nursinghomeid 
                     FROM Resident INNER JOIN Nurse ON Resident.nurseid=Nurse.nurseid 
-                    WHERE Nurse.nursinghomeid={0}
+                    WHERE Nurse.nursinghomeid={0} ORDER BY Resident.name
                 """.format(homeid)
         cursor.execute(query)
         values = cursor.fetchall()
@@ -334,7 +334,7 @@ def nurses_page():
         global homeid
         global LOGGED
         cursor = db.cursor()
-        cursor.execute("SELECT nurseid, name,capacity,type,address,tel FROM Nurse WHERE nursinghomeid=%s",(homeid,))
+        cursor.execute("SELECT nurseid, name,capacity,type,address,tel FROM Nurse WHERE nursinghomeid=%s ORDER BY name",(homeid,))
         values = cursor.fetchall()
         cursor.close()
         return render_template("nurses.html",values=values,islogged=LOGGED)
@@ -431,7 +431,7 @@ def signup_page():
     else:
         db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
         cursor = db.cursor()
-        cursor.execute("DROP TABLE IF EXISTS Diseaseowners")
+        #cursor.execute("DROP TABLE IF EXISTS Diseaseowners")
         #cursor.execute("DROP TABLE IF EXISTS Resident")
         #cursor.execute("DROP TABLE IF EXISTS Nurse")
         #cursor.execute("DROP TABLE IF EXISTS Disease")
@@ -495,7 +495,7 @@ def signup_page():
                         ON DELETE RESTRICT 
                         ON UPDATE CASCADE,
                         PRIMARY KEY (residentid))""")
-        cursor.execute("""CREATE TABLE IF NOT EXISTS DiseaseOwners(residentid INT NOT NULL,
+        cursor.execute("""CREATE TABLE IF NOT EXISTS Diseaseowners(residentid INT NOT NULL,
                                 diseaseid INT NOT NULL,
                                 FOREIGN KEY (residentid)	
                                 REFERENCES Resident(residentid)
