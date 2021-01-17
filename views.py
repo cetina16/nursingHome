@@ -220,7 +220,6 @@ def residents_page():
     global homeid
     cursor = mysql.connection.cursor()
     if request.method == "GET":
-        #JOIN 
         query = """SELECT Resident.residentid, Resident.name,Resident.age,Resident.gender,Resident.bedridden, Resident.tel, Nurse.nursinghomeid 
                     FROM Resident INNER JOIN Nurse ON Resident.nurseid=Nurse.nurseid 
                     WHERE Nurse.nursinghomeid={0} ORDER BY Resident.name

@@ -6,8 +6,6 @@ app = Flask(__name__)
 mysql = MySQL(app)
 
 def create_app():
-   
-    #app.config.from_object("settings")
     
     app.secret_key = "secret"
 
@@ -20,7 +18,6 @@ def create_app():
     #app.config['MYSQL_USER'] = "root"
     #app.config['MYSQL_PASSWORD'] = "1616"
     #app.config['MYSQL_DB'] = "db_nursing"
-    #app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
     app.add_url_rule("/", view_func=views.home)
     app.add_url_rule("/signup", view_func=views.signup_page, methods=["GET", "POST"])
