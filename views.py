@@ -587,7 +587,7 @@ def signup_page():
             mysql.connection.commit()
             cursor.close()
         flash("Account created!")
-        return render_template("login.html")
+        #return render_template("login.html")
         #return redirect(url_for(login_page))
 
 def login_page():
