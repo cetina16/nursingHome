@@ -43,7 +43,7 @@ def resident_disease_page(residentid):
             diseases = cursor.fetchall()
             cursor.close()
             default = "0"
-            return render_template("resident_disease.html", values = values,islogged=LOGGED,diseases=diseases,default=default)
+            return render_template("resident_disease.html", values = values,diseases=diseases,default=default)
         else:
             form_disease = request.form["diseaseid"]
             form_startdate = request.form["startdate"]
@@ -424,7 +424,7 @@ def nurse_edit_page(nurseid):
             cursor.execute("SELECT capacity_exist FROM Nurse WHERE nurseid=%s",(nurseid,) )
             capacity_exist = cursor.fetchone()
             values = {"name": "", "capacity": "", "type":"","tel":"","address":""}
-            return render_template("nurse_edit_exist.html", values = values,islogged=LOGGED,capacity=capacity_exist)
+            return render_template("nurse_edit_exist.html", values = values,capacity=capacity_exist)
         else:
         
             form_name = request.form["name"]
@@ -590,7 +590,7 @@ def signup_page():
 def login_page():
     if "homeid" in session:
         homeid = session["homeid"]
-        return redirect(url_for(home))
+        return redirect(url_for("home"))
     else:
         mysql = current_app.config["mysql"]
         if request.method == "GET":
@@ -715,7 +715,7 @@ def profile_page():
                             WHERE Doctor.nursinghomeid={0}
                     """.format(homeid) )
             values= cursor.fetchone()
-            return render_template("profile.html", islogged=LOGGED,values=values)
+            return render_template("profile.html",values=values)
         else:
             session.pop("homeid",None)
             name = None
