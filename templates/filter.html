@@ -2,11 +2,12 @@
 {% block title %}Filter{% endblock %}
 {% block content %}
 {% if islogged %}
+<div class="box">
     <h1 class="title">Filter by Disease</h1>
     <div class="columns">
         <div class="column">
             <div class="box">
-                <form action="" method="post" name="filter">
+                <form action="" method="post" name="filter_disease">
                     <script type=text/javascript src="{{url_for('static', filename='main.js') }}"></script>
                     <div class="field">
                         <label for="disease_filter_id" class="label"> Select Disease  </label>
@@ -28,12 +29,12 @@
                     </div>
                     <div class="field is-grouped">
                         <div class="control">
-                        <button class="button is-light is-medium">  Filter  </button>
+                        <button class="button is-light is-medium" name="filter_disease">  Filter  </button>
                         </div>
                     </div>
                 </form>
             </div>
-            {% if residents%}
+            {% if residents %}
             <div class="box">
                     <h3 class="subtitle">Residents with the " {{diseasename[0]}} "</h3>
                     <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
@@ -69,5 +70,41 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="box">
+    <h1 class="title">Show residents with high risk level-5</h1>
+    <div class="columns">
+        <div class="column">
+            <div class="box">
+                <form action="" method="post" name="filter_risk">
+                    <div class="field is-grouped">
+                        <div class="control">
+                        <button class="button is-light is-medium" name="filter_risk">  Show  </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {% if residents2 %}
+            <div class="box">
+                    <h3 class="subtitle">Residents </h3>
+                    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        {% for resident in residents2 %}
+                        <tr> 
+                    
+                        <td> {{resident[0] }}</td> 
+                    
+                        </tr>
+                        {% endfor %}
+                    </table>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="column">
+        <p> .... </p>
+        </div>
+    </div>
+</div>
     {% endif %}
 {% endblock %}

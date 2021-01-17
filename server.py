@@ -7,7 +7,13 @@ def create_app():
    
     app = Flask(__name__)
     app.config.from_object("settings")
-   
+    
+    #app.config['MYSQL_HOST'] = ""
+    #app.config['MYSQL_USER'] = ""
+    #app.config['MYSQL_PASSWORD'] = ""
+    #app.config['MYSQL_DB'] = ""
+    #app.config['MYSQL_CURSORCLASS'] = ""
+
     app.add_url_rule("/", view_func=views.home)
     app.add_url_rule("/signup", view_func=views.signup_page, methods=["GET", "POST"])
     app.add_url_rule("/login", view_func=views.login_page, methods=["GET", "POST"])

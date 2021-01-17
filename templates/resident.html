@@ -67,7 +67,17 @@
                 {% if diseases %}
                 <form action="" method="post" name="disease_list">
                 <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                  <tr>
+                    <td></td>
+                    <td><p class = "subtitle"> Name</p></td>
+                    <td><p class = "subtitle"> Start Date</p></td>
+                    <td><p class = "subtitle"> End Date </p></td>
+                    <td><p class = "subtitle"> Examination period </p></td>
+      
+               
+                  </tr>
                   {% for disease in diseases %}
+              
                   <tr>
                     <td>
                       <label class="checkbox"> 
@@ -76,7 +86,8 @@
                     </td>
                     <td>{{disease[1]}} </th>
                     <td>{{disease[2]}} </td>
-                    <td>{{disease[3]}} </td>  
+                    <td>{{disease[3]}} </td>
+                    <td>{{disease[4]}}</td>  
                   </tr>
                   {% endfor %}    
                 </table>

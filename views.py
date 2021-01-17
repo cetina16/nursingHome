@@ -258,7 +258,7 @@ def resident_page(residentid):
         values = cursor.fetchone()
         cursor.execute("SELECT name FROM Nurse WHERE nurseid=%s",(values[6],))
         nurse_name = cursor.fetchone()
-        query = """SELECT Diseaseowners.diseaseid,Disease.name,Diseaseowners.startdate,Diseaseowners.enddate
+        query = """SELECT Diseaseowners.diseaseid,Disease.name,Diseaseowners.startdate,Diseaseowners.enddate,Disease.period
                         FROM Disease INNER JOIN Diseaseowners ON Disease.diseaseid=Diseaseowners.diseaseid 
                         WHERE residentid={0}
                     """.format(residentid)
@@ -609,41 +609,49 @@ def filter_page():
     global homeid
     db = MySQLdb.connect(host="esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com", user="sm4ldbmqufcwcb7c", passwd="h7ao08s547gk3cq4", db="n9y7uick5bvxsj5u")
     cursor = db.cursor()
-    cursor.execute("""SELECT COUNT(residentid), Disease.name 
+    cursor.execute("""SELECT  Disease.name ,COUNT(residentid)
                     FROM Diseaseowners INNER JOIN Disease ON Disease.diseaseid=Diseaseowners.diseaseid
                     WHERE Disease.homeid={0}
                     GROUP BY Diseaseowners.diseaseid """.format(homeid))
     result = dict(cursor.fetchall())
+    cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
+    diseases = cursor.fetchall()
+    residents = None
+    residents2 = None
     if request.method == "GET":
-        cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
-        diseases = cursor.fetchall()
-        cursor.execute("SELECT diseaseid,risklevel FROM Disease WHERE homeid={0}".format(homeid))
-        risks = cursor.fetchall()
-        cursor.close()
-        residents = None
         default = "0"
-        return render_template("filter.html", diseases=diseases, islogged=LOGGED,residents=residents,risks=risks,default=default,result=result)
+        return render_template("filter.html", diseases=diseases, islogged=LOGGED,residents=residents,residents2=residents2, default=default,result=result)
     else:
-        form_diseaseid = request.form["diseaseid"] 
-        diseaseid = str(form_diseaseid)
-        if diseaseid == "0":
-            flash("Select a disease! If there is no disease in the system yet, please add a disease first!") 
-            return redirect(url_for("filter_page"))
+        if 'filter_disease' in request.form:
+            form_diseaseid = request.form["diseaseid"] 
+            diseaseid = str(form_diseaseid)
+            if diseaseid == "0":
+                flash("Select a disease! If there is no disease in the system yet, please add a disease first!") 
+                return redirect(url_for("filter_page"))
+            else:
+                query = """SELECT Resident.residentid, Resident.name
+                                FROM Resident INNER JOIN Diseaseowners ON Resident.residentid=Diseaseowners.residentid 
+                                WHERE diseaseid={0}
+                            """.format(form_diseaseid)
+                cursor.execute(query) 
+                residents = cursor.fetchall()
+                cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
+                diseases = cursor.fetchall()
+                cursor.execute("SELECT name FROM Disease WHERE diseaseid={0}".format(form_diseaseid))
+                diseasename = cursor.fetchone()
+
+                cursor.close()
+                return render_template("filter.html",islogged=LOGGED,result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename)
         else:
-            query = """SELECT Resident.residentid, Resident.name
-                            FROM Resident INNER JOIN Diseaseowners ON Resident.residentid=Diseaseowners.residentid 
-                            WHERE diseaseid={0}
-                        """.format(form_diseaseid)
+            risklevel = 5
+            query = """SELECT Resident.name
+                                FROM Resident INNER JOIN Diseaseowners ON Resident.residentid=Diseaseowners.residentid 
+                                INNER JOIN Disease ON Disease.diseaseid=Diseaseowners.diseaseid
+                                WHERE Disease.risklevel={0}
+                            """.format(risklevel)
             cursor.execute(query) 
-            residents = cursor.fetchall()
-            cursor.execute("SELECT diseaseid,name FROM Disease WHERE homeid={0}".format(homeid))
-            diseases = cursor.fetchall()
-            cursor.execute("SELECT name FROM Disease WHERE diseaseid={0}".format(form_diseaseid))
-            diseasename = cursor.fetchone()
-
-            cursor.close()
-            return render_template("filter.html",islogged=LOGGED,result=result,residents=residents,diseases=diseases,diseasename =diseasename)
-
+            residents2 = cursor.fetchall()
+            return render_template("filter.html",islogged=LOGGED,result=result,residents=residents,residents2=residents2,diseases=diseases)
 def review_page():
     global LOGGED
     global homeid
