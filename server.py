@@ -2,8 +2,9 @@ from flask import Flask, render_template,request
 import views
 from flask_mysqldb import MySQLdb
 
+ app = Flask(__name__)
+
 def create_app():
-    app = Flask(__name__)
 
     app.config.from_object("settings")
 
@@ -37,7 +38,7 @@ def create_app():
 
 if __name__ == "__main__":
     app = create_app()
-    app.server.run()
+    app.run()
    # port = app.config.get("PORT", 5000)
    # app.run(host="0.0.0.0", port=port)
 
