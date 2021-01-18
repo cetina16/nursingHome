@@ -30,7 +30,7 @@
             
             <a class="navbar-item" href="{{ url_for('home') }}"> <i class="fas fa-heartbeat" aria-hidden="true"></i> Home</a> 
 
-            
+            {% if "homeid" in session %}
             <a class="navbar-item" href="{{ url_for('profile_page') }}">
               <i class="fas fa-user" aria-hidden="true"></i>  Profile
             </a>
@@ -71,22 +71,23 @@
                 
               </div>
             </div>
-            
+            {% endif %}
           </div>
         
 
           <div class="navbar-end">
             <div class="navbar-item">
               <div class="buttons">
-              
+                {% if not "homeid" in session %}
                 <a class="button is-primary"  href="{{ url_for('signup_page') }}"><strong>
                   <i class="fas fa-user-plus" aria-hidden="true"></i> Sign up</strong></a>  
               <a class="button is-light" href="{{ url_for('login_page') }}">
                 <i class="fas fa-sign-in-alt" aria-hidden="true"></i>Log in</a>
-             
+                {% endif %}
+                {% if "homeid" in session %}
                 <a class="button is-light" href="{{ url_for('logout_page') }}">
                   <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Log out</a>
-            
+                {% endif %}
               </div>
             </div>
           </div>
