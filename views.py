@@ -644,8 +644,8 @@ def filter_page():
         residents = None
         residents2 = None
         diseasename = None
+        default = "0"
         if request.method == "GET":
-            default = "0"
             return render_template("filter.html", diseases=diseases,residents=residents,residents2=residents2, default=default,result=result)
         else:
             if 'filter_disease' in request.form:
@@ -653,7 +653,7 @@ def filter_page():
                 diseaseid = str(form_diseaseid)
                 if diseaseid == "0":
                     flash("Select a disease! If there is no disease in the system yet, please add a disease first!") 
-                    return render_template("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename)
+                    return render_template("filter.html",result=result,residents=residents,residents2=residents2,default=default,diseases=diseases,diseasename =diseasename)
                 else:
                     query = """SELECT Resident.residentid, Resident.name
                                     FROM Resident INNER JOIN Diseaseowners ON Resident.residentid=Diseaseowners.residentid 
@@ -667,7 +667,7 @@ def filter_page():
                     diseasename = cursor.fetchone()
                     cursor.close()
                     #return redirect(url_for("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename))
-                    return render_template("filter.html",result=result,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename)
+                    return render_template("filter.html",result=result,default=default,residents=residents,residents2=residents2,diseases=diseases,diseasename =diseasename)
             else:
                 risklevel = 5
                 query = """SELECT DISTINCT Resident.name

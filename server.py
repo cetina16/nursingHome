@@ -14,15 +14,15 @@ app.config["mysql"]=mysql
 
 app.secret_key = "secret"
 
-app.config['MYSQL_HOST'] = "esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com"
-app.config['MYSQL_USER'] = "sm4ldbmqufcwcb7c"
-app.config['MYSQL_PASSWORD'] = "h7ao08s547gk3cq4"
-app.config['MYSQL_DB'] = "n9y7uick5bvxsj5u"
+#app.config['MYSQL_HOST'] = "esilxl0nthgloe1y.chr7pe7iynqr.eu-west-1.rds.amazonaws.com"
+#app.config['MYSQL_USER'] = "sm4ldbmqufcwcb7c"
+#app.config['MYSQL_PASSWORD'] = "h7ao08s547gk3cq4"
+#app.config['MYSQL_DB'] = "n9y7uick5bvxsj5u"
 
-#app.config['MYSQL_HOST'] = "localhost"
-#app.config['MYSQL_USER'] = "root"
-#app.config['MYSQL_PASSWORD'] = "1616"
-#app.config['MYSQL_DB'] = "db_nursing"
+app.config['MYSQL_HOST'] = "localhost"
+app.config['MYSQL_USER'] = "root"
+app.config['MYSQL_PASSWORD'] = "1616"
+app.config['MYSQL_DB'] = "db_nursing"
 
 app.add_url_rule("/", view_func=views.home)
 app.add_url_rule("/signup", view_func=views.signup_page, methods=["GET", "POST"])
@@ -49,4 +49,4 @@ app.add_url_rule("/resident/<int:residentid>/disease_add", view_func=views.resid
 app.add_url_rule("/resident/<int:residentid>/edit", view_func=views.resident_edit_page, methods=["GET", "POST"])
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
