@@ -49,5 +49,5 @@ app.add_url_rule("/resident/<int:residentid>/disease_add", view_func=views.resid
 app.add_url_rule("/resident/<int:residentid>/edit", view_func=views.resident_edit_page, methods=["GET", "POST"])
 
 if __name__ == "__main__":
-    #app.run(debug=True)  # for local
-    app.run() # for heroku
+    app.run(debug=True)  # for local
+    #app.run() # for heroku

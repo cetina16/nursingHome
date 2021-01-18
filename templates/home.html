@@ -2,65 +2,69 @@
 {% block title %} Home {% endblock %}
 {% block content %}
 
+<div class="box">
   <h1 class="title">Nursing Home System </h1>
-          <p class="subtitle">{{ date }}</p>
-          
-          <p class = "subtitle">   
-            <span class="icon is-small">
-            <i class="fas fa-user-md" aria-hidden="true"></i>
-          </span>
-           {{ name }}  </p>
-  
-          <div class="box">
-            <article class="media">
-              <div class="media-left">
-                <figure class="image is-128x128">
-                  <img class="is-rounded" src="../static/itu.jpg" alt="Image">
-                </figure>
-              </div>
-              <div class="media-content">
-                <div class="content">
-                  <p>
-                    <strong>Ayse Betul Cetin</strong> <small>150180730</small> 
-                    <br>
-                    This project was prepared within the scope of BLG317E- Database Systems course. 
-                    <br>The aim of the project is to benefit digitalization of follow-up in institutions such as nursing homes where the elderly stay and their health is monitored.
-                    <br> <br> Sign-up to create your own system as a doctor of nursing home.
-                    <br> Log-in if you have registered before.
-                    <br> <br> 
-                  </p>
-                </div>
-         
-              </div>
-            </article>
+  <p class="subtitle">{{ date }}</p>
+        
+  <p class = "subtitle">   
+    <span class="icon is-small">
+    <i class="fas fa-user-md" aria-hidden="true"></i>
+    </span> {{ name }}  </p>
+</div>
+      <div class="box">
+
+        <article class="media">
+          <div class="media-left">
+              <figure class="image is-128x128">
+                      <img class="is-rounded" src="../static/itu.jpg" alt="Image">
+              </figure>
           </div>
-       
-          <div class="box">
-          <h1 class="title">Home Information</h1>
-    <div class="columns">
-        <div class="column">
-          <div class="box">
-            <article class="media">
-              <div class="media-content">
-                <div class="content">
-                  <p>
-                    <strong>Residents</strong> 
-                    <br>
-                  </p>
-                  <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                    {% for resident in residents %}
-                    <tr> 
-                    <td> {{resident[0]}} </td> 
-                     </tr>
-                    {% endfor %}
-                  </table>
-                </div>
-              </div>
-            </article>
+          <div class="media-content">
+                    <div class="content">
+                      <p>
+                        <strong>Ayse Betul Cetin</strong> <small>150180730</small> 
+                        <br>
+                        This project was prepared within the scope of BLG317E- Database Systems course. 
+                        <br>The aim of the project is to benefit digitalization of follow-up in institutions such as nursing homes where the elderly stay and their health is monitored.
+                        <br> <br> Sign-up to create your own system as a doctor of nursing home.
+                        <br> Log-in if you have registered before.
+                        <br> <br> 
+                      </p>
+                    </div>
+            
           </div>
-        </div>
-        <div class="column">
-            <div class="box">
+        </article> 
+      </div>
+
+
+ 
+
+<div class="box">
+  <h1 class="title">Home Information</h1>
+  <div class="columns">
+      <div class="column">
+        <div class="box">
+                <article class="media">
+                  <div class="media-content">
+                    <div class="content">
+                      <p>
+                        <strong>Residents</strong> 
+                        <br>
+                      </p>
+                      <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        {% for resident in residents %}
+                        <tr> 
+                        <td> {{resident[0]}} </td> 
+                        </tr>
+                        {% endfor %}
+                      </table>
+                    </div>
+                  </div>
+                </article>
+         </div>
+      </div>
+      <div class="column">
+        <div class="box">
                 <article class="media">
                   <div class="media-content">
                     <div class="content">
@@ -81,8 +85,8 @@
                   </div>
                 </article>
               </div>
-        </div>
-        <div class="column">
+      </div>
+      <div class="column">
             <div class="box">
                 <article class="media">
                   <div class="media-content">
@@ -103,13 +107,10 @@
            
                   </div>
                 </article>
-              </div>
-        </div>
+              </div> 
+      </div>
+</div>
 
-    </div>
+</div>
 
-  </div>
-
-          
-             
 {% endblock %}
