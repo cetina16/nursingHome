@@ -8,17 +8,18 @@ app = Flask(__name__)
 mysql = MySQL(app)
 
 
-
 app.config["app"]=app
 app.config["mysql"]=mysql
 
 app.secret_key = "secret"
 
+# heroku db:
 app.config['MYSQL_HOST'] = "eu-cdbr-west-03.cleardb.net"
 app.config['MYSQL_USER'] = "ba0e19c7c7c293"
 app.config['MYSQL_PASSWORD'] = "0ecf3d8d"
 app.config['MYSQL_DB'] = "heroku_6da1ba342772e3b"
 
+#localhost:
 #app.config['MYSQL_HOST'] = "localhost"
 #app.config['MYSQL_USER'] = "root"
 #app.config['MYSQL_PASSWORD'] = "1616"
@@ -49,5 +50,5 @@ app.add_url_rule("/resident/<int:residentid>/disease_add", view_func=views.resid
 app.add_url_rule("/resident/<int:residentid>/edit", view_func=views.resident_edit_page, methods=["GET", "POST"])
 
 if __name__ == "__main__":
-    #app.run(debug=True)  # for local
-    app.run() # for heroku
+    app.run(debug=True)  # for local
+    #app.run() # for heroku deploy
