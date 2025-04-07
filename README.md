@@ -3,7 +3,7 @@
 Commands :
 ```
 python -m  venv venv
-venv\Scripts\activate  (Windows)
+venv\Scripts\activate 
 pip install -r requirements.txt
 python server.py
 ```
